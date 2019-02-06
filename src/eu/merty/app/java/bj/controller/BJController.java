@@ -1,24 +1,20 @@
 package eu.merty.app.java.bj.controller;
 
-import eu.merty.app.java.bj.model.Card;
-import eu.merty.app.java.bj.model.Deck;
-
-//import interfaces.Cardgame;
-
-import eu.merty.app.java.bj.model.BJHand;
-import eu.merty.app.java.bj.model.BJTable;
-import eu.merty.app.java.bj.model.Person;
-import eu.merty.app.java.bj.model.Seat;
+import eu.merty.app.java.bj.model.*;
 import eu.merty.app.java.bj.view.BJCommandLineUI;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
+//import interfaces.Cardgame;
 
 public class BJController {
     private final int NUMBER_OF_SEATS = 3;
     private final int NUMBER_OF_CARD_DECKS = 1;
     private final int PLAYER_START_MONEY = 20;
     private final String[] options = new String[]
-            {"sit", "up", "run", "hit", "stand", "doubleD", "split"};
+            {"sit", "up", "run", "hit", "stand", "double", "split"};
     private BJTable table;
     private HashMap<String, Person> player;
     //  private CardGameUI ui;
@@ -28,20 +24,64 @@ public class BJController {
     public BJController() {
         table = new BJTable(NUMBER_OF_SEATS, NUMBER_OF_CARD_DECKS);
         player = new HashMap<>();
-        ui = new BJCommandLineUI(this);
+        ui = new BJCommandLineUI();
     }
 
-    public void doCommand(String[] command) {
-        if (command == null || command.length == 0)
-            throw new IllegalArgumentException();
-        switch (command[0]) {
+    public static void main(String[] args) {
+        BJController bjController = new BJController();
+        bjController.run();
+    }
+
+    public void run() {
+        do {
+            String userAction = ui.ask("These are your options: " + getRoundOptions());
+            if (getRoundOptions().contains(userAction))
+                doCommand(userAction);
+        } while (table.getOccupiedSeatsNumber() > 0);
+    }
+
+    private String getRoundOptions() {
+        List<String> options = new LinkedList<String>();
+        if (table.getOccupiedSeatsNumber() < table.getSeatList().length) {
+            options.add("sit");
+        }
+        if (table.getOccupiedSeatsNumber() > 0) {
+            options.add("up");
+        }
+        if (table.getOccupiedSeatsNumber() > 0) {
+            options.add("run");
+        }
+
+        return String.join(", ", options);
+    }
+
+    private String getHandOptions(BJHand h) {
+        List<String> options = new LinkedList<String>();
+        if (BJRuleset.mayHitAndStand(h)) {
+            options.add("hit");
+        }
+        if (BJRuleset.mayHitAndStand(h)) {
+            options.add("stand");
+        }
+        if (BJRuleset.mayDoubleDown(h)) {
+            options.add("double");
+        }
+        if (BJRuleset.maySplit(h)) {
+            options.add("split");
+        }
+
+        return String.join(", ", options);
+    }
+
+    public void doCommand(String command) {
+        switch (command) {
             case "sit":
                 String playerName = ui.ask("What is your name?");
                 while (true) try {
                     sitPlayer(playerName, Integer.parseInt(ui.ask("On which seat?")));
                     break;
                 } catch (Exception ignored) {
-                    ui.message("Invalid seat number.");
+                    ui.err("Invalid seat number.");
                 }
                 break;
             case "up":
@@ -50,24 +90,24 @@ public class BJController {
                         freeSeat(Integer.parseInt(ui.ask("Which seat should be freed?")));
                         break;
                     } catch (Exception ignored) {
-                        ui.message("Seat is not occupied.");
+                        ui.err("Seat is not occupied.");
                     }
                 }
                 break;
             case "run":
-                break;
-            case "hit":
-                break;
-            case "stand":
-                break;
-            case "doubleD":
-                break;
-            case "split":
+                playRound();
                 break;
             default:
-                throw new
-                        IllegalArgumentException("Could not found the command.");
+                ui.err("Could not found the command.");
         }
+    }
+
+    private void playRound() {
+        placeBets();
+        placeCards();
+        playHands();
+        playDealer();
+        payout();
     }
 
     private void payout() {
@@ -79,11 +119,32 @@ public class BJController {
     }
 
     private void playHands() {
-
+        for (Seat s : table.getSeatList()) {
+            for (BJHand h : s.getHandList()) {
+                if (!BJRuleset.hasBlackJack(h)) {
+                    do {
+                        String answer = ui.ask("What do you, " + s.getOwner().getName() + ", want to do? " + getHandOptions(h));
+                        // TODO do stuff
+                    } while ( getHandOptions(h).contains(answer);
+                }
+            }
+        }
     }
 
     private void placeCards() {
-
+        for (Seat s : table.getSeatList()) {
+            for (BJHand h : s.getHandList()) {
+                h.addCard(table.getDeck().drawCard());
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                ui.draw(table);
+            }
+        }
+        table.getDealersHand().addCard(table.getDeck().drawCard());
+        ui.draw(table);
     }
 
     private void placeBets() {
@@ -95,10 +156,10 @@ public class BJController {
                         String answer = ui.ask("Player, " + player.getName() + ", please place your bet for seat number " + seatNo + ".");
                         BJHand tmpHand = new BJHand(player);
                         tmpHand.setBettingAmount(Integer.parseInt(answer));
-                        table.getSeatList()[seatNo].getHandList().add(tmpHand);
+                        table.getSeatList()[seatNo].clearHands();
+                        table.getSeatList()[seatNo].addHand(tmpHand);
                         break;
                     } catch (Exception ignored) {
-
                     }
             }
     }

@@ -1,30 +1,39 @@
 package eu.merty.app.java.bj.model;
 
-public class Card {
-    private final int value;
-    private final char suit;
-    private final char face;
+import java.util.Arrays;
+import java.util.List;
 
-    Card(int v, char f, char s) {
-        value = v >= 0 ? v : 0;
-        face = "AKQJT98765432X".indexOf(f) >= 0 ? f : '_';
-        suit = "dschx".indexOf(s) >= 0 ? s : '_';
+public class Card {
+    private char suit;
+    private char rank;
+
+    /**
+     * Constructor
+     *
+     * @param s suit of the card (x-joker, s-spades, h-hearts, d-diamonds, c-clubs)
+     * @param r rank of the card (X, A, K, Q, J, T, 9, 8, 7, 6, 5, 4, 3, 2)
+     */
+    Card(char s, char r) throws IllegalArgumentException {
+        List<Character> cardRank = Arrays.asList('X', 'A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2');
+        List<Character> cardSuit = Arrays.asList('x', 's', 'h', 'd', 'c');
+        if (!cardSuit.contains(s) || !cardRank.contains(r)) {
+            throw new IllegalArgumentException();
+        }
+        suit = s;
+        rank = r;
     }
 
-    public char getSuit() {
+    char getSuit() {
         return suit;
     }
 
-    public char getRank() {
-        return face;
+    char getRank() {
+        return rank;
     }
 
-    public int getValue() {
-        return value;
-    }
 
-    @Override
     public String toString() {
-        return new String(new char[]{getRank(), getSuit()});
+        char[] c = {getRank(), getSuit()};
+        return new String(c);
     }
 }

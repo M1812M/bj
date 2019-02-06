@@ -15,4 +15,9 @@ public class BJTable extends Table {
     public Hand removeDealersHand() {
         return this.dealer.removeHand();
     }
+
+    @Override
+    public String toString() {
+        return "Dealer (" + dealer.getHand() + ") " + super.toString();
+    }
 }

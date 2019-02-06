@@ -1,15 +1,13 @@
 package eu.merty.app.java.bj.model;
 
-import eu.merty.app.java.bj.model.Card;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CardTest {
     private static Card testCard;
 
     @org.junit.jupiter.api.BeforeAll
     static void initAll() {
-        testCard = new Card(1, 'h', 'A');
+        testCard = new Card('h', 'A');
     }
 
     @org.junit.jupiter.api.Test
@@ -20,10 +18,5 @@ class CardTest {
     @org.junit.jupiter.api.Test
     void getRank() {
         assertEquals('A', testCard.getRank());
-    }
-
-    @org.junit.jupiter.api.Test
-    void getValue() {
-        assertEquals(1, testCard.getValue());
     }
 }

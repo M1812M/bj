@@ -1,8 +1,14 @@
 package eu.merty.app.java.bj.view;
 
+import eu.merty.app.java.bj.controller.BJController;
+import eu.merty.app.java.bj.model.Table;
+
+import java.util.Scanner;
+
 public class BJCommandLineUI {
     private BJController game;
     private Scanner scanner;
+/*
     private String options;
 
     public BJCommandLineUI(BJController game) {
@@ -44,6 +50,7 @@ public class BJCommandLineUI {
         }
         return true;
     }
+*/
 
     public String ask(String question) {
         message(question);
@@ -59,5 +66,9 @@ public class BJCommandLineUI {
 
     public void err(String message) {
         System.err.println(message);
+    }
+
+    public void draw(Table t) {
+        message(t.toString());
     }
 }

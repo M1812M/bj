@@ -25,4 +25,9 @@ public class BJHand extends Hand {
             throw new IllegalArgumentException("deltaAmount is negative.");
         bettingAmount += deltaAmount;
     }
+
+    @Override
+    public String toString() {
+        return this.getCards() + " [" + bettingAmount + "]";
+    }
 }
