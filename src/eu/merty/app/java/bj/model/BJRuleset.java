@@ -26,11 +26,11 @@ public abstract class BJRuleset {
     }
 
     public static boolean mayDoubleDown(BJHand h) {
-        return handValue(h) <= 21 && h.getCards().size() == 2;
+        return getHandValue(h) <= 21 && h.getCards().size() == 2;
     }
 
     public static boolean mayHitAndStand(BJHand h) {
-        return handValue(h) < 21;
+        return getHandValue(h) < 21;
     }
 
     /**
@@ -44,21 +44,21 @@ public abstract class BJRuleset {
      * <br> 2 if player has a BJ
      */
     public static int compareToDealer(BJHand h, Hand dealer) {
-        if (handValue(h) > 21)
+        if (getHandValue(h) > 21)
             return -1;
-        else if (handValue(h) == handValue(dealer))
+        else if (getHandValue(h) == getHandValue(dealer))
             return 0;
-        else if (handValue(h) == 21 && dealer.getCards().size() == 2)
+        else if (getHandValue(h) == 21 && dealer.getCards().size() == 2)
             return 2;
-        else if (handValue(h) > handValue(dealer))
+        else if (getHandValue(h) > getHandValue(dealer))
             return 1;
-        else if (handValue(dealer) > 21)
+        else if (getHandValue(dealer) > 21)
             return 1;
         else
             return -1;
     }
 
-    private static int handValue(Hand hand) {
+    public static int getHandValue(Hand hand) {
         int value = 0;
         boolean hasAce = false;
         for (Card c : hand.getCards()) {
@@ -72,6 +72,6 @@ public abstract class BJRuleset {
     }
 
     public static boolean hasBlackJack(BJHand h) {
-        return handValue(h) == 21 && h.getCards().size() == 2;
+        return getHandValue(h) == 21 && h.getCards().size() == 2;
     }
 }

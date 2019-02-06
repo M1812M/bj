@@ -10,8 +10,8 @@ import java.util.List;
 //import interfaces.Cardgame;
 
 public class BJController {
-    private final int NUMBER_OF_SEATS = 3;
-    private final int NUMBER_OF_CARD_DECKS = 1;
+    private final int NUMBER_OF_SEATS = 2;
+    private final int NUMBER_OF_CARD_DECKS = 2;
     private final int PLAYER_START_MONEY = 20;
     private final String[] options = new String[]
             {"sit", "up", "run", "hit", "stand", "double", "split"};
@@ -55,7 +55,7 @@ public class BJController {
         return String.join(", ", options);
     }
 
-    private String getHandOptions(BJHand h) {
+    private List<String> getHandOptions(BJHand h, Person p) {
         List<String> options = new LinkedList<String>();
         if (BJRuleset.mayHitAndStand(h)) {
             options.add("hit");
@@ -63,14 +63,14 @@ public class BJController {
         if (BJRuleset.mayHitAndStand(h)) {
             options.add("stand");
         }
-        if (BJRuleset.mayDoubleDown(h)) {
+        if (p.getMoney() >= h.getBettingAmount() && BJRuleset.mayDoubleDown(h)) {
             options.add("double");
         }
-        if (BJRuleset.maySplit(h)) {
+        if (p.getMoney() >= h.getBettingAmount() && BJRuleset.maySplit(h)) {
             options.add("split");
         }
 
-        return String.join(", ", options);
+        return options;
     }
 
     public void doCommand(String command) {
@@ -78,7 +78,9 @@ public class BJController {
             case "sit":
                 String playerName = ui.ask("What is your name?");
                 while (true) try {
-                    sitPlayer(playerName, Integer.parseInt(ui.ask("On which seat?")));
+                    sitPlayer(
+                            playerName,
+                            Integer.parseInt(ui.ask("On which of the " + NUMBER_OF_SEATS + " seat(s)?")) - 1);
                     break;
                 } catch (Exception ignored) {
                     ui.err("Invalid seat number.");
@@ -103,6 +105,9 @@ public class BJController {
     }
 
     private void playRound() {
+        if (table.getDeck().getDeckSize() < 52 * NUMBER_OF_CARD_DECKS / 2) {
+            table.newDeck(NUMBER_OF_CARD_DECKS);
+        }
         placeBets();
         placeCards();
         playHands();
@@ -111,21 +116,73 @@ public class BJController {
     }
 
     private void payout() {
+        int dealersHandValue = BJRuleset.getHandValue(table.getDealersHand());
+        for (Seat s : table.getSeatList()) {
+            for (BJHand h : s.getHandList()) {
+                int playersHandValue = BJRuleset.getHandValue(h);
 
+                // TODO implement an instant BJ with 50% extra.
+                if (playersHandValue > 21) {
+                    ui.message(s.getOwner().getName() + ", your hand " + h + " lost.");
+                } else if (dealersHandValue > 21) {
+                    ui.message(s.getOwner().getName() + ", your hand " + h + " won.");
+                    s.getOwner().increaseMoney(h.getBettingAmount() * 2);
+                } else if (dealersHandValue == playersHandValue) {
+                    ui.message(s.getOwner().getName() + ", your hand " + h + " has a push.");
+                    s.getOwner().increaseMoney(h.getBettingAmount());
+                } else if (dealersHandValue < playersHandValue) {
+                    ui.message(s.getOwner().getName() + ", your hand " + h + " won.");
+                    s.getOwner().increaseMoney(h.getBettingAmount() * 2);
+                } else { //if (dealerV > playerV) {
+                    ui.message(s.getOwner().getName() + ", your hand " + h + " lost.");
+                }
+            }
+        }
     }
 
     private void playDealer() {
-
+        Hand h = table.getDealersHand();
+        do {
+            h.addCard(table.getDeck().drawCard());
+            ui.draw(table);
+        } while (BJRuleset.getHandValue(h) < 17);
     }
 
     private void playHands() {
         for (Seat s : table.getSeatList()) {
             for (BJHand h : s.getHandList()) {
-                if (!BJRuleset.hasBlackJack(h)) {
-                    do {
-                        String answer = ui.ask("What do you, " + s.getOwner().getName() + ", want to do? " + getHandOptions(h));
-                        // TODO do stuff
-                    } while ( getHandOptions(h).contains(answer);
+                boolean done = false;
+                while (!BJRuleset.hasBlackJack(h) && getHandOptions(h, s.getOwner()).size() > 0 && !done) {
+                    String answer = ui.ask(
+                            "What do you, " +
+                                    s.getOwner().getName() +
+                                    ", want to do for your hand (" + h + ")? " +
+                                    String.join(", ", getHandOptions(h, s.getOwner())));
+                    if (!getHandOptions(h, s.getOwner()).contains(answer)) {
+                        switch (answer) {
+                            case "hit":
+                                h.addCard(table.getDeck().drawCard());
+                                break;
+                            case "stand":
+                                done = true;
+                                break;
+                            case "double":
+                                h.increaseBettingAmount(s.getOwner().decreaseMoney(h.getBettingAmount()));
+                                break;
+                            case "split":
+                                BJHand tmpH = new BJHand(s.getOwner());
+                                tmpH.setBettingAmount(s.getOwner().decreaseMoney(h.getBettingAmount()));
+                                Card tmpC = h.getCards().get(0);
+                                tmpH.addCard(tmpC);
+                                h.removeCard(tmpC);
+                                s.addHand(tmpH); // to debug, if taking for next hand to play
+                                break;
+                            default:
+                                ui.message("Try again!");
+                                break;
+                        }
+                        ui.draw(table);
+                    }
                 }
             }
         }
@@ -153,7 +210,9 @@ public class BJController {
                 Person player = table.getSeatList()[seatNo].getOwner();
                 while (true)
                     try {
-                        String answer = ui.ask("Player, " + player.getName() + ", please place your bet for seat number " + seatNo + ".");
+                        String answer = ui.ask(
+                                "Player, " + player.getName() + " (" + player.getMoney() +
+                                        "), please place your bet for seat number " + seatNo + ".");
                         BJHand tmpHand = new BJHand(player);
                         tmpHand.setBettingAmount(Integer.parseInt(answer));
                         table.getSeatList()[seatNo].clearHands();

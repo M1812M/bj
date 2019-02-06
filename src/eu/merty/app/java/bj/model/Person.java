@@ -13,7 +13,7 @@ public class Person {
         this.money += amount > 0 ? amount : 0;
     }
 
-    public void decreaseMoney(int amount) {
+    public int decreaseMoney(int amount) {
         if (amount < 0 || money - amount < 0)
             try {
                 throw new Exception("This player doesn't hold enough money or the amount is negative.");
@@ -22,6 +22,7 @@ public class Person {
             }
         else
             this.money -= amount;
+        return amount;
     }
 
     public int getMoney() {

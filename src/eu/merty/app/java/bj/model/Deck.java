@@ -30,7 +30,7 @@ public class Deck {
         this.shuffle();
     }
 
-    int getDeckSize() {
+    public int getDeckSize() {
         return deck.size();
     }
 

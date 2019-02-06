@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public abstract class Table {
-    private Deck deck;
+    protected Deck deck;
     private Seat[] seatList;
 
     Table(int numberOfSeats, Deck deck) {

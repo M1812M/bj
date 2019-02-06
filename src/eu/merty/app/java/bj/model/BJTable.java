@@ -8,6 +8,10 @@ public class BJTable extends Table {
         this.dealer = new Dealer();
     }
 
+    public void newDeck(int numberOfCardDecks) {
+        this.deck = new Deck(Deck.CardDeckVariation.STANDARD_52, numberOfCardDecks);
+    }
+
     public Hand getDealersHand() {
         return this.dealer.getHand();
     }
