@@ -1,4 +1,6 @@
-package eu.merty.app.java.bj;
+package eu.merty.app.java.bj.model;
+
+import eu.merty.app.java.bj.model.Card;
 
 import static org.junit.jupiter.api.Assertions.*;
 

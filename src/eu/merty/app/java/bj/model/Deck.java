@@ -1,9 +1,10 @@
-package eu.merty.app.java.bj;
+package eu.merty.app.java.bj.model;
 
-import java.util.*;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 public class Deck {
-    private static final Dictionary<Character, Integer> DOPPELKOPF_VALUE = new Hashtable<Character, Integer>() {{
+    static final Dictionary<Character, Integer> DOPPELKOPF_VALUE = new Hashtable<Character, Integer>() {{
         put('2', 2);
         put('3', 3);
         put('4', 4);
@@ -16,9 +17,10 @@ public class Deck {
         put('J', 10);
         put('Q', 10);
         put('K', 10);
-        put('A', 1);
+        put('A', 11);
     }};
-    static final List<String> FULL_DECK = Arrays.asList(
+
+    static final String[] FULL_DECK = new String[]{
             "Xx", "Xx", "Xx",
             "2c", "2d", "2h", "2s",
             "3c", "3d", "3h", "3s",
@@ -33,16 +35,18 @@ public class Deck {
             "Qc", "Qd", "Qh", "Qs",
             "Kc", "Kd", "Kh", "Ks",
             "Ac", "Ad", "Ah", "As"
-    );
-    private ArrayList<Card> deck = new ArrayList<>();
+    };
+    private ArraySet<Card> deck;
 
     Deck(CardDeckVariation variation, int numberOfDecks) {
+        String[] cardDeckArray = new String[variation.value];
+        deck = new ArraySet<Card>();
+        System.arraycopy(FULL_DECK, FULL_DECK.length - variation.value, cardDeckArray, 0, variation.value);
         for (int i = numberOfDecks; i > 0; i--) {
-            for (String cardChars : FULL_DECK.subList(FULL_DECK.size() - variation.value, FULL_DECK.size())) {
+            for (String cardChars : cardDeckArray) {
                 deck.add(new Card(DOPPELKOPF_VALUE.get(cardChars.charAt(0)), cardChars.charAt(0), cardChars.charAt(1)));
             }
         }
-        this.shuffle();
     }
 
     public int getDeckSize() {
@@ -50,11 +54,7 @@ public class Deck {
     }
 
     public Card drawCard() {
-        return deck.remove(0);
-    }
-
-    private void shuffle() {
-        Collections.shuffle(this.deck, new Random(System.currentTimeMillis()));
+        return deck.removeRandom();
     }
 
     public enum CardDeckVariation {
