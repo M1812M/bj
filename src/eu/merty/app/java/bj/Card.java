@@ -1,19 +1,25 @@
 package eu.merty.app.java.bj;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Card {
-    private int value;
     private char suit;
     private char rank;
+
+    private List<Character> cardRank = Arrays.asList('X', 'A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2');
+    private List<Character> cardSuit = Arrays.asList('x', 's', 'h', 'd', 'c');
 
     /**
      * Constructor
      *
-     * @param v value for counting
-     * @param s suit of the card (s-spades, h-hearts, d-diamonds, c-clubs)
-     * @param r rank of the card (A, K, Q, J, T, 9, 8, 7, 6, 5, 4, 3, 2)
+     * @param s suit of the card (x-joker, s-spades, h-hearts, d-diamonds, c-clubs)
+     * @param r rank of the card (X, A, K, Q, J, T, 9, 8, 7, 6, 5, 4, 3, 2)
      */
-    Card(int v, char s, char r) {
-        value = v;
+    Card(char s, char r) throws IllegalArgumentException {
+        if (!cardSuit.contains(s) || !cardRank.contains(r)) {
+            throw new IllegalArgumentException();
+        }
         suit = s;
         rank = r;
     }
@@ -26,12 +32,9 @@ public class Card {
         return rank;
     }
 
-    public int getValue() {
-        return value;
-    }
 
     public String toString() {
-        char[] c = {getSuit(), getRank()};
+        char[] c = {getRank(), getSuit()};
         return new String(c);
     }
 }
