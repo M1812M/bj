@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class BJCommandLineUI {
     private BJController game;
-    private Scanner scanner;
+    private static Scanner scanner = new Scanner(System.in);
 /*
     private String options;
 

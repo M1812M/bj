@@ -28,6 +28,6 @@ public class BJHand extends Hand {
 
     @Override
     public String toString() {
-        return this.getCards() + " [" + bettingAmount + "]";
+        return this.getCards() + " (" + bettingAmount + ")";
     }
 }

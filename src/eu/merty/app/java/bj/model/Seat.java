@@ -8,8 +8,8 @@ public class Seat {
     private Person owner;
     private List<BJHand> handList;
 
-    public Seat(Person owner) {
-        this.owner = owner;
+    public Seat() {
+        handList = new LinkedList<>();
     }
 
     public List<BJHand> getHandList() {
@@ -36,8 +36,19 @@ public class Seat {
         owner = null;
     }
 
+    public boolean isEmpty() {
+        return owner == null;
+    }
+
+    public Seat sitOwner(Person person) {
+        this.owner = person;
+        return this;
+    }
+
     @Override
     public String toString() {
+        if (owner == null)
+            return "";
         return owner.getName() + " (" + handList.stream().map(Object::toString).collect(Collectors.joining(", ", "", "")) + ")";
     }
 }

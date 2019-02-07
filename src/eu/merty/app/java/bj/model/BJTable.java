@@ -22,6 +22,6 @@ public class BJTable extends Table {
 
     @Override
     public String toString() {
-        return "Dealer (" + dealer.getHand() + ") " + super.toString();
+        return "Dealer (" + dealer.getHand() + "), " + super.toString();
     }
 }

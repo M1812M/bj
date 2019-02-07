@@ -12,6 +12,8 @@ public abstract class Table {
             throw new IllegalArgumentException("Wrong argument given.");
         this.deck = deck;
         this.seatList = new Seat[numberOfSeats];
+        for (int i = 0; i < numberOfSeats; i++)
+            seatList[i] = new Seat();
     }
 
     public Deck getDeck() {
@@ -24,7 +26,8 @@ public abstract class Table {
 
     public int getOccupiedSeatsNumber() {
         int n = 0;
-        for (Seat s : seatList) n++;
+        for (Seat s : seatList)
+            n += s.isEmpty() ? 0 : 1;
         return n;
     }
 
