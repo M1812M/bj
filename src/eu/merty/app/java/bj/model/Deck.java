@@ -1,9 +1,9 @@
-package eu.merty.app.java.bj;
+package eu.merty.app.java.bj.model;
 
 import java.util.*;
 
 public class Deck {
-    static final List<String> FULL_DECK = Arrays.asList(
+    private static final List<String> FULL_DECK = Arrays.asList(
             "Ac", "Ad", "Ah", "As",
             "Kc", "Kd", "Kh", "Ks",
             "Qc", "Qd", "Qh", "Qs",

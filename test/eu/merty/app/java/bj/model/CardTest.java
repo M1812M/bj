@@ -1,4 +1,4 @@
-package eu.merty.app.java.bj;
+package eu.merty.app.java.bj.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
