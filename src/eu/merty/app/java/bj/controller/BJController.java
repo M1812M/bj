@@ -10,8 +10,8 @@ import java.util.List;
 //import interfaces.Cardgame;
 
 public class BJController {
-    private final int NUMBER_OF_SEATS = 2;
-    private final int NUMBER_OF_CARD_DECKS = 2;
+    private final int NUMBER_OF_SEATS = 5;
+    private final int NUMBER_OF_CARD_DECKS = 4;
     private final int PLAYER_START_MONEY = 20;
     private final String[] options = new String[]
             {"sit", "up", "run", "hit", "stand", "double", "split"};

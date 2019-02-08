@@ -31,7 +31,6 @@ public class Card {
         return rank;
     }
 
-
     public String toString() {
         char[] c = {getRank(), getSuit()};
         return new String(c);

@@ -13,7 +13,7 @@ public class Dealer {
 
     public Hand removeHand() {
         Hand tmpHand = this.hand;
-        this.hand = null;
+        this.hand = new Hand();
         return tmpHand;
     }
 }
