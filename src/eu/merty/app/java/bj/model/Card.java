@@ -3,6 +3,12 @@ package eu.merty.app.java.bj.model;
 import java.util.Arrays;
 import java.util.List;
 
+// TODO change access modifier to rather private
+/**
+ * @author Hugo
+ *
+ * Gamecard with the france face.
+ */
 public class Card {
     private char suit;
     private char rank;

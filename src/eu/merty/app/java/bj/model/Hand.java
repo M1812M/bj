@@ -4,25 +4,29 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Hand {
-    private List<Card> hand;
+    private List<Card> heldCards;
 
     public Hand() {
-        hand = new LinkedList<Card>();
+        heldCards = new LinkedList<Card>();
     }
 
-    public List<Card> getCards() {
-        return hand;
+    public Hand(List<Card> cards) {
+        heldCards = cards;
+    }
+
+    List<Card> getCards() {
+        return heldCards;
     }
 
     public void addCard(Card card) {
-        hand.add(card);
+        heldCards.add(card);
     }
 
-    public boolean removeCard(Card card) {
-        return hand.remove(card);
+    public Card removeCard(int index) {
+        return heldCards.remove(index);
     }
 
     public String toString() {
-        return String.join(", ", hand.toString());
+        return String.join(", ", heldCards.toString());
     }
 }

@@ -2,6 +2,11 @@ package eu.merty.app.java.bj.model;
 
 import java.util.*;
 
+/**
+ * @author Hugo
+ * <p>
+ * Deck of cards with france faces. Variations are 52 or 32 cards.
+ */
 public class Deck {
     private static final List<String> FULL_DECK = Arrays.asList(
             "Ac", "Ad", "Ah", "As",
@@ -19,24 +24,8 @@ public class Deck {
             "2c", "2d", "2h", "2s",
             "Xx", "Xx", "Xx"
     );
-    private ArrayList<Card> deck = new ArrayList<>();
 
-    Deck(CardDeckVariation variation, int numberOfDecks) {
-        for (int i = numberOfDecks; i > 0; i--) {
-            for (String cardChars : FULL_DECK.subList(0, variation.value - 1)) {
-                deck.add(new Card(cardChars.charAt(1), cardChars.charAt(0)));
-            }
-        }
-        this.shuffle();
-    }
-
-    public int getDeckSize() {
-        return deck.size();
-    }
-
-    public Card drawCard() {
-        return deck.remove(0);
-    }
+    private ArrayList<Card> deck;
 
     private void shuffle() {
         Collections.shuffle(this.deck, new Random(System.currentTimeMillis()));
@@ -49,5 +38,35 @@ public class Deck {
         CardDeckVariation(int size) {
             this.value = size;
         }
+    }
+
+    /**
+     * Creates a deck of cards with shuffled order.
+     *
+     * @param variation     CardDeckVariation is needed for the number and kind of cards to pick from.
+     * @param numberOfDecks Multiple card faces, but only form the same kind, and will be mixed together.
+     */
+    Deck(CardDeckVariation variation, int numberOfDecks) {
+        deck = new ArrayList<>();
+        // add all cards within variation to the deck
+        for (int i = numberOfDecks; i > 0; i--)
+            FULL_DECK.subList(0, variation.value).forEach((s) -> deck.add(new Card(s.charAt(1), s.charAt(0))));
+        this.shuffle();
+    }
+
+    /**
+     * @return Deck size.
+     */
+    public int getDeckSize() {
+        return deck.size();
+    }
+
+    /**
+     * Drawing a random card and removing it from the deck.
+     *
+     * @return Card which is drawn from the top of deck.
+     */
+    public Card drawCard() {
+        return deck.remove(0);
     }
 }

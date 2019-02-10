@@ -180,9 +180,7 @@ public class BJController {
                             case "split":
                                 BJHand tmpH = new BJHand(s.getOwner());
                                 tmpH.setBettingAmount(s.getOwner().decreaseMoney(h.getBettingAmount()));
-                                Card tmpC = h.getCards().get(0);
-                                tmpH.addCard(tmpC);
-                                h.removeCard(tmpC);
+                                tmpH.addCard(h.removeCard(0));
                                 s.addHand(tmpH); // to debug, if taking for next hand to play
                                 break;
                             default:
