@@ -12,12 +12,8 @@ public class BJTable extends Table {
         this.deck = new Deck(Deck.CardDeckVariation.STANDARD_52, numberOfCardDecks);
     }
 
-    public Hand getDealersHand() {
-        return this.dealer.getHand();
-    }
-
-    public Hand removeDealersHand() {
-        return this.dealer.removeHand();
+    public Dealer getDealer() {
+        return this.dealer;
     }
 
     @Override

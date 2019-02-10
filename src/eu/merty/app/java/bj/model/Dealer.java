@@ -11,9 +11,7 @@ public class Dealer {
         return hand;
     }
 
-    public Hand removeHand() {
-        Hand tmpHand = this.hand;
+    public void removeHand() {
         this.hand = new Hand();
-        return tmpHand;
     }
 }

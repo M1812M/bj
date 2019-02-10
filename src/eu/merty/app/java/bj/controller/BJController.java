@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-//import interfaces.Cardgame;
+// TODO import interfaces.Cardgame;
 
 public class BJController {
     private final int NUMBER_OF_SEATS = 5;
@@ -64,10 +64,10 @@ public class BJController {
         if (BJRuleset.mayHitAndStand(h)) {
             options.add("stand");
         }
-        if (p.getMoney() >= h.getBettingAmount() && BJRuleset.mayDoubleDown(h)) {
+        if (p.getMoney() >= h.getBetValue() && BJRuleset.mayDoubleDown(h)) {
             options.add("double");
         }
-        if (p.getMoney() >= h.getBettingAmount() && BJRuleset.maySplit(h)) {
+        if (p.getMoney() >= h.getBetValue() && BJRuleset.maySplit(h)) {
             options.add("split");
         }
 
@@ -118,11 +118,11 @@ public class BJController {
         if (table.getDeck().getDeckSize() < 52 * NUMBER_OF_CARD_DECKS / 2) {
             table.newDeck(NUMBER_OF_CARD_DECKS);
         }
-        table.removeDealersHand();
+        table.getDealer().removeHand();
     }
 
     private void payout() {
-        int dealersHandValue = BJRuleset.getHandValue(table.getDealersHand());
+        int dealersHandValue = BJRuleset.getHandValue(table.getDealer().getHand());
         for (Seat s : table.getSeatList()) {
             for (BJHand h : s.getHandList()) {
                 int playersHandValue = BJRuleset.getHandValue(h);
@@ -132,13 +132,13 @@ public class BJController {
                     ui.message(s.getOwner().getName() + ", your hand " + h + " with value " + BJRuleset.getHandValue(h) + " lost.");
                 } else if (dealersHandValue > 21) {
                     ui.message(s.getOwner().getName() + ", your hand " + h + " with value " + BJRuleset.getHandValue(h) + " won.");
-                    s.getOwner().increaseMoney(h.getBettingAmount() * 2);
+                    s.getOwner().increaseMoney(h.getBetValue() * 2);
                 } else if (dealersHandValue == playersHandValue) {
                     ui.message(s.getOwner().getName() + ", your hand " + h + " with value " + BJRuleset.getHandValue(h) + " has a push.");
-                    s.getOwner().increaseMoney(h.getBettingAmount());
+                    s.getOwner().increaseMoney(h.getBetValue());
                 } else if (dealersHandValue < playersHandValue) {
                     ui.message(s.getOwner().getName() + ", your hand " + h + " with value " + BJRuleset.getHandValue(h) + " won.");
-                    s.getOwner().increaseMoney(h.getBettingAmount() * 2);
+                    s.getOwner().increaseMoney(h.getBetValue() * 2);
                 } else { //if (dealerV > playerV) {
                     ui.message(s.getOwner().getName() + ", your hand " + h + " with value " + BJRuleset.getHandValue(h) + " lost.");
                 }
@@ -173,13 +173,13 @@ public class BJController {
                                 done = true;
                                 break;
                             case "double":
-                                h.increaseBettingAmount(s.getOwner().decreaseMoney(h.getBettingAmount()));
+                                h.addBetValue(s.getOwner().decreaseMoney(h.getBetValue()));
                                 h.addCard(table.getDeck().drawCard());
                                 done = true;
                                 break;
                             case "split":
                                 BJHand tmpH = new BJHand(s.getOwner());
-                                tmpH.setBettingAmount(s.getOwner().decreaseMoney(h.getBettingAmount()));
+                                tmpH.setBetValue(s.getOwner().decreaseMoney(h.getBetValue()));
                                 tmpH.addCard(h.removeCard(0));
                                 s.addHand(tmpH); // to debug, if taking for next hand to play
                                 break;
@@ -230,7 +230,7 @@ public class BJController {
                                 "Player, " + player.getName() + " (" + player.getMoney() +
                                         "), please place your bet for seat number " + (seatNo + 1) + ".");
                         BJHand tmpHand = new BJHand(player);
-                        tmpHand.setBettingAmount(player.decreaseMoney(Integer.parseInt(answer)));
+                        tmpHand.setBetValue(player.decreaseMoney(Integer.parseInt(answer)));
                         table.getSeatList()[seatNo].clearHands();
                         table.getSeatList()[seatNo].addHand(tmpHand);
                         break;

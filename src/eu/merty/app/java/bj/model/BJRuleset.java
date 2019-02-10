@@ -58,6 +58,7 @@ public abstract class BJRuleset {
             return -1;
     }
 
+    // TODO replce getHandValue with a function to be thrown on the hand for checking the value, but considering aces in a BJTable.
     public static int getHandValue(Hand hand) {
         int value = 0;
         boolean hasAce = false;
