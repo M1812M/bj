@@ -1,7 +1,7 @@
 package eu.merty.app.java.bj.view;
 
 import eu.merty.app.java.bj.controller.BJController;
-import eu.merty.app.java.bj.model.Table;
+import eu.merty.app.java.cardgame.Cardgame;
 
 import java.util.Scanner;
 
@@ -27,13 +27,13 @@ public class BJCommandLineUI {
     public boolean paint(String[][] tableData) {
         for (String[] stringArray : tableData) {
             switch (stringArray[0]) {
-                case "BJTable":
-                    message("BlackJack Table");
+                case "BJCardgame":
+                    message("BlackJack Cardgame");
                     break;
                 case "Dealer":
                     message("Dealer: " + stringArray[1]);
                     break;
-                case "Seat":
+                case "Player":
                     String hands = "";
                     for (int i = 3; i + 1 < stringArray.length; i++) {
                         hands += ", <" + stringArray[i] + ">(" + stringArray[i + 1] + ")";
@@ -68,7 +68,7 @@ public class BJCommandLineUI {
         System.err.println(message);
     }
 
-    public void draw(Table t) {
+    public void draw(Cardgame t) {
         message(t.toString());
     }
 }

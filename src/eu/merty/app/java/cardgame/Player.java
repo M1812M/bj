@@ -1,14 +1,17 @@
-package eu.merty.app.java.bj.model;
+package eu.merty.app.java.cardgame;
+
+import eu.merty.app.java.bj.model.BJHand;
+import eu.merty.app.java.bj.model.Person;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Seat {
+public class Player {
     private Person owner;
     private List<BJHand> handList;
 
-    public Seat() {
+    public Player() {
         handList = new LinkedList<>();
     }
 
@@ -40,7 +43,7 @@ public class Seat {
         return owner == null;
     }
 
-    public Seat sitOwner(Person person) {
+    public Player sitOwner(Person person) {
         this.owner = person;
         return this;
     }

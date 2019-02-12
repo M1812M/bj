@@ -1,5 +1,8 @@
 package eu.merty.app.java.bj.model;
 
+import eu.merty.app.java.cardgame.Card;
+import eu.merty.app.java.cardgame.Hand;
+
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -58,7 +61,7 @@ public abstract class BJRuleset {
             return -1;
     }
 
-    // TODO replce getHandValue with a function to be thrown on the hand for checking the value, but considering aces in a BJTable.
+    // TODO replce getHandValue with a function to be thrown on the hand for checking the value, but considering aces in a BJCardgame.
     public static int getHandValue(Hand hand) {
         int value = 0;
         boolean hasAce = false;

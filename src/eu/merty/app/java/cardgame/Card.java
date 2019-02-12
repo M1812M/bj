@@ -1,4 +1,4 @@
-package eu.merty.app.java.bj.model;
+package eu.merty.app.java.cardgame;
 
 import java.util.Arrays;
 import java.util.List;

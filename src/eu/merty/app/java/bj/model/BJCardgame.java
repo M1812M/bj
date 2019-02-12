@@ -1,9 +1,12 @@
 package eu.merty.app.java.bj.model;
 
-public class BJTable extends Table {
+import eu.merty.app.java.cardgame.Cardgame;
+import eu.merty.app.java.cardgame.Deck;
+
+public class BJCardgame extends Cardgame {
     private Dealer dealer;
 
-    public BJTable(int numberOfSeats, int numberOfCardDecks) {
+    public BJCardgame(int numberOfSeats, int numberOfCardDecks) {
         super(numberOfSeats, new Deck(Deck.CardDeckVariation.STANDARD_52, numberOfCardDecks));
         this.dealer = new Dealer();
     }

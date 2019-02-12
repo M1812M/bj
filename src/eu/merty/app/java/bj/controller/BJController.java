@@ -1,7 +1,11 @@
 package eu.merty.app.java.bj.controller;
 
-import eu.merty.app.java.bj.model.*;
+import eu.merty.app.java.bj.model.BJCardgame;
+import eu.merty.app.java.bj.model.BJHand;
+import eu.merty.app.java.bj.model.BJRuleset;
+import eu.merty.app.java.bj.model.Person;
 import eu.merty.app.java.bj.view.BJCommandLineUI;
+import eu.merty.app.java.cardgame.Player;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -15,14 +19,14 @@ public class BJController {
     private final int PLAYER_START_MONEY = 20;
     private final String[] options = new String[]
             {"sit", "up", "run", "hit", "stand", "double", "split"};
-    private BJTable table;
+    private BJCardgame table;
     private HashMap<String, Person> player;
     //  private CardGameUI ui;
     private BJCommandLineUI ui;
     // 0 sit - 1 up - 2 run - 3 hit - 4 stand - 5 doubleD - 6 split
 
     public BJController() {
-        table = new BJTable(NUMBER_OF_SEATS, NUMBER_OF_CARD_DECKS);
+        table = new BJCardgame(NUMBER_OF_SEATS, NUMBER_OF_CARD_DECKS);
         player = new HashMap<>();
         ui = new BJCommandLineUI();
     }
@@ -93,7 +97,7 @@ public class BJController {
                         freeSeat(Integer.parseInt(ui.ask("Which seat should be freed?")));
                         break;
                     } catch (Exception ignored) {
-                        ui.err("Seat is not occupied.");
+                        ui.err("Player is not occupied.");
                     }
                 }
                 break;
@@ -123,7 +127,7 @@ public class BJController {
 
     private void payout() {
         int dealersHandValue = BJRuleset.getHandValue(table.getDealer().getHand());
-        for (Seat s : table.getSeatList()) {
+        for (Player s : table.getPlayerList()) {
             for (BJHand h : s.getHandList()) {
                 int playersHandValue = BJRuleset.getHandValue(h);
 
@@ -155,7 +159,7 @@ public class BJController {
     }
 
     private void playHands() {
-        for (Seat s : table.getSeatList()) {
+        for (Player s : table.getPlayerList()) {
             for (BJHand h : s.getHandList()) {
                 boolean done = false;
                 while (!BJRuleset.hasBlackJack(h) && getHandOptions(h, s.getOwner()).size() > 0 && !done) {
@@ -207,7 +211,7 @@ public class BJController {
     }
 
     private void placePlayerCards() {
-        for (Seat s : table.getSeatList()) {
+        for (Player s : table.getPlayerList()) {
             for (BJHand h : s.getHandList()) {
                 h.addCard(table.getDeck().drawCard());
                 try {
@@ -221,9 +225,9 @@ public class BJController {
     }
 
     private void placeBets() {
-        for (int seatNo = 0; seatNo < table.getSeatList().length; seatNo++)
-            if (!table.getSeatList()[seatNo].isEmpty()) {
-                Person player = table.getSeatList()[seatNo].getOwner();
+        for (int seatNo = 0; seatNo < table.getPlayerList().length; seatNo++)
+            if (!table.getPlayerList()[seatNo].isEmpty()) {
+                Person player = table.getPlayerList()[seatNo].getOwner();
                 while (true)
                     try {
                         String answer = ui.ask(
@@ -231,8 +235,8 @@ public class BJController {
                                         "), please place your bet for seat number " + (seatNo + 1) + ".");
                         BJHand tmpHand = new BJHand(player);
                         tmpHand.setBetValue(player.decreaseMoney(Integer.parseInt(answer)));
-                        table.getSeatList()[seatNo].clearHands();
-                        table.getSeatList()[seatNo].addHand(tmpHand);
+                        table.getPlayerList()[seatNo].clearHands();
+                        table.getPlayerList()[seatNo].addHand(tmpHand);
                         break;
                     } catch (Exception ignored) {
                     }
@@ -240,22 +244,22 @@ public class BJController {
     }
 
     private void sitPlayer(String playerName, int seatNumber) {
-        if (!table.getSeatList()[seatNumber].isEmpty())
-            throw new IllegalArgumentException("Seat is not empty.");
+        if (!table.getPlayerList()[seatNumber].isEmpty())
+            throw new IllegalArgumentException("Player is not empty.");
         if (player.containsKey(playerName))
-            table.getSeatList()[seatNumber].sitOwner(player.get(playerName));
+            table.getPlayerList()[seatNumber].sitOwner(player.get(playerName));
         else {
             Person tmpPerson = new Person(playerName);
             tmpPerson.increaseMoney(PLAYER_START_MONEY);
             player.put(playerName, tmpPerson);
             ui.message("Welcome " + tmpPerson.getName());
-            table.getSeatList()[seatNumber].sitOwner(tmpPerson);
+            table.getPlayerList()[seatNumber].sitOwner(tmpPerson);
         }
     }
 
     private void freeSeat(int seatNumber) {
-        if (table.getSeatList()[seatNumber].isEmpty())
-            throw new IllegalArgumentException("Seat is empty.");
-        table.getSeatList()[seatNumber].freeOwner();
+        if (table.getPlayerList()[seatNumber].isEmpty())
+            throw new IllegalArgumentException("Player is empty.");
+        table.getPlayerList()[seatNumber].freeOwner();
     }
 }

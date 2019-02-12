@@ -1,5 +1,7 @@
 package eu.merty.app.java.bj.model;
 
+import eu.merty.app.java.cardgame.Hand;
+
 public class Dealer {
     private Hand hand;
 
