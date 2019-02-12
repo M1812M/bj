@@ -3,33 +3,25 @@ package eu.merty.app.java.bj.model;
 import eu.merty.app.java.cardgame.Hand;
 
 public class BJHand extends Hand {
-    private int betValue;
+    private int betAmount;
 
-    public BJHand(Person owner) {
+    public BJHand(int betAmount) {
         super();
-        if (owner == null)
-            throw new NullPointerException("Owner is not instantiated.");
-        this.betValue = 0;
+        this.betAmount = betAmount;
     }
 
-    public int getBetValue() {
-        return this.betValue;
+    public int getBetAmount() {
+        return this.betAmount;
     }
 
-    public void setBetValue(int betAmount) {
-        if (this.betValue != 0)
-            throw new UnsupportedOperationException("The bet is already set to.");
-        this.betValue = betAmount;
-    }
-
-    public void addBetValue(int deltaAmount) {
-        if (deltaAmount < 0)
-            throw new IllegalArgumentException("deltaAmount is negative.");
-        this.betValue += deltaAmount;
+    public void changeBetAmountByDelta(int deltaAmount) {
+        if (this.betAmount + deltaAmount < 0)
+            throw new IllegalArgumentException("Negative bet isn't possible.");
+        this.betAmount += deltaAmount;
     }
 
     @Override
     public String toString() {
-        return super.toString() + "(" + this.betValue + ")";
+        return super.toString() + "(" + this.betAmount + ")";
     }
 }

@@ -7,15 +7,19 @@ import java.util.stream.Collectors;
 // TODO Cardgame should hold the player on seats with their hands for their seats.
 public abstract class Cardgame {
     protected Deck deck;
-    private Player[] playerList;
+    private Seat[] playerList;
 
-    Cardgame(int numberOfPlayer, Deck deck) {
-        if (numberOfPlayer < 1 || deck == null || deck.getDeckSize() == 0)
+    protected Cardgame(int numberOfPlayer, Deck.CardDeckVariation deckVariation, int numberOfDecks) {
+        if (numberOfPlayer < 1)
             throw new IllegalArgumentException("Wrong argument given.");
-        this.deck = deck;
+        this.deck = new Deck(deckVariation, numberOfDecks);
         this.playerList = new Player[numberOfPlayer];
         for (int i = 0; i < numberOfPlayer; i++)
             playerList[i] = new Player();
+    }
+
+    public void renewDeck() {
+        this.deck = new Deck(this.deck.getDeckVariation(), this.deck.getNumberOfDecks());
     }
 
     public void dealCards() {
@@ -54,9 +58,11 @@ public abstract class Cardgame {
     }
 
     public String toString() {
+        int s = 0;
         return Arrays
                 .stream(playerList)
                 .map(Object::toString)
-                .collect(Collectors.joining(", "));
+                .collect(Collectors
+                        .joining("\n" + (++s) + ". ", "" + (++s), ""));
     }
 }

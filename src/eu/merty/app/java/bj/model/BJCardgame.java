@@ -7,12 +7,8 @@ public class BJCardgame extends Cardgame {
     private Dealer dealer;
 
     public BJCardgame(int numberOfSeats, int numberOfCardDecks) {
-        super(numberOfSeats, new Deck(Deck.CardDeckVariation.STANDARD_52, numberOfCardDecks));
+        super(numberOfSeats, Deck.CardDeckVariation.STANDARD_52, numberOfCardDecks);
         this.dealer = new Dealer();
-    }
-
-    public void newDeck(int numberOfCardDecks) {
-        this.deck = new Deck(Deck.CardDeckVariation.STANDARD_52, numberOfCardDecks);
     }
 
     public Dealer getDealer() {
@@ -21,6 +17,6 @@ public class BJCardgame extends Cardgame {
 
     @Override
     public String toString() {
-        return "Dealer (" + dealer.getHand() + "), " + super.toString();
+        return super.toString() + "\nDealer (" + dealer.getHand() + ")";
     }
 }

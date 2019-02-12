@@ -24,21 +24,9 @@ public class Deck {
             "2c", "2d", "2h", "2s",
             "Xx", "Xx", "Xx"
     );
-
+    private Deck.CardDeckVariation deckVariation;
+    private int numberOfDecks;
     private ArrayList<Card> deck;
-
-    private void shuffle() {
-        Collections.shuffle(this.deck, new Random(System.currentTimeMillis()));
-    }
-
-    public enum CardDeckVariation {
-        STANDARD_52(52), STANDARD_32(32);
-        private int value;
-
-        CardDeckVariation(int size) {
-            this.value = size;
-        }
-    }
 
     /**
      * Creates a deck of cards with shuffled order.
@@ -49,9 +37,23 @@ public class Deck {
     Deck(CardDeckVariation variation, int numberOfDecks) {
         deck = new ArrayList<>();
         // add all cards within variation to the deck
+        this.deckVariation = variation;
+        this.numberOfDecks = numberOfDecks;
         for (int i = numberOfDecks; i > 0; i--)
             FULL_DECK.subList(0, variation.value).forEach((s) -> deck.add(new Card(s.charAt(1), s.charAt(0))));
         this.shuffle();
+    }
+
+    private void shuffle() {
+        Collections.shuffle(this.deck, new Random(System.currentTimeMillis()));
+    }
+
+    public Deck.CardDeckVariation getDeckVariation() {
+        return this.deckVariation;
+    }
+
+    public int getNumberOfDecks() {
+        return this.numberOfDecks;
     }
 
     /**
@@ -68,5 +70,14 @@ public class Deck {
      */
     public Card drawCard() {
         return deck.remove(0);
+    }
+
+    public enum CardDeckVariation {
+        STANDARD_52(52), STANDARD_32(32);
+        private int value;
+
+        CardDeckVariation(int size) {
+            this.value = size;
+        }
     }
 }

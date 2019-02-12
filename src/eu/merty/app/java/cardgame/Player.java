@@ -9,13 +9,13 @@ import java.util.stream.Collectors;
 
 public class Player {
     private Person owner;
-    private List<BJHand> handList;
+    private List<Hand> handList;
 
     public Player() {
         handList = new LinkedList<>();
     }
 
-    public List<BJHand> getHandList() {
+    public List<Hand> getHandList() {
         return handList;
     }
 
@@ -52,6 +52,6 @@ public class Player {
     public String toString() {
         if (owner == null)
             return "";
-        return owner.getName() + " (" + handList.stream().map(Object::toString).collect(Collectors.joining(", ", "", "")) + ")";
+        return owner.getName() + " (" + handList.stream().map(Object::toString).collect(Collectors.joining(", ", "[", "]")) + ")";
     }
 }
