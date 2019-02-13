@@ -1,57 +1,22 @@
 package eu.merty.app.java.cardgame;
 
-import eu.merty.app.java.bj.model.BJHand;
-import eu.merty.app.java.bj.model.Person;
+public abstract class Player {
+    public abstract String getName();
+/*    private Person person;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-public class Player {
-    private Person owner;
-    private List<Hand> handList;
-
-    public Player() {
-        handList = new LinkedList<>();
+    public Player(Person person) {
+        this.person = person;
     }
 
-    public List<Hand> getHandList() {
-        return handList;
-    }
-
-    public void addHand(BJHand h) {
-        handList.add(h);
-    }
-
-    public boolean removeHand(BJHand h) {
-        return handList.remove(h);
-    }
-
-    public void clearHands() {
-        handList = new LinkedList<>();
-    }
-
-    public Person getOwner() {
-        return owner;
-    }
-
-    public void freeOwner() {
-        owner = null;
-    }
-
-    public boolean isEmpty() {
-        return owner == null;
-    }
-
-    public Player sitOwner(Person person) {
-        this.owner = person;
-        return this;
+    public Person getPerson() {
+        return person;
     }
 
     @Override
     public String toString() {
-        if (owner == null)
+        if (person == null)
             return "";
-        return owner.getName() + " (" + handList.stream().map(Object::toString).collect(Collectors.joining(", ", "[", "]")) + ")";
+        return person.getName() + " (" + handList.stream().map(Object::toString).collect(Collectors.joining(", ", "[", "]")) + ")";
     }
+*/
 }

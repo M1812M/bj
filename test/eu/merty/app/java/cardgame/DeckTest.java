@@ -1,6 +1,5 @@
-package eu.merty.app.java.bj.model;
+package eu.merty.app.java.cardgame;
 
-import eu.merty.app.java.cardgame.Deck;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

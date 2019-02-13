@@ -68,7 +68,7 @@ public class BJCommandLineUI {
         System.err.println(message);
     }
 
-    public void draw(Cardgame t) {
-        message(t.toString());
+    public void draw(Cardgame cardgame) {
+        message("\n\n\n--------------------\n" + cardgame.toString());
     }
 }

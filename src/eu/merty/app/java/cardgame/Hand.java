@@ -27,6 +27,10 @@ public class Hand {
         return heldCards;
     }
 
+    public int getHandSize() {
+        return this.heldCards.size();
+    }
+
     public List<Character> getRanks(){
         LinkedList<Character> ranks = new LinkedList<Character>();
         this.heldCards.forEach(c -> ranks.addLast(c.getRank()));

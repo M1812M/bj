@@ -1,7 +1,9 @@
 package eu.merty.app.java.bj.model;
 
-public class Person {
-    int money;
+import eu.merty.app.java.cardgame.Player;
+
+public class Person extends Player {
+    private int money;
     private String name;
 
     public Person(String name) {
@@ -9,20 +11,10 @@ public class Person {
         this.money = 0;
     }
 
-    public void increaseMoney(int amount) {
-        this.money += amount > 0 ? amount : 0;
-    }
-
-    public int decreaseMoney(int amount) {
-        if (amount < 0 || money - amount < 0)
-            try {
-                throw new Exception("This player doesn't hold enough money or the amount is negative.");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        else
-            this.money -= amount;
-        return amount;
+    public void changeMoneyByDelta(int amount) {
+        if (this.money + amount < 0)
+            throw new IllegalArgumentException("Money value cannot be negative.");
+        this.money += amount;
     }
 
     public int getMoney() {

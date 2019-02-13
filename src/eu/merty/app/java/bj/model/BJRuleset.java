@@ -1,6 +1,5 @@
 package eu.merty.app.java.bj.model;
 
-import eu.merty.app.java.cardgame.Card;
 import eu.merty.app.java.cardgame.Hand;
 
 import java.util.Dictionary;
@@ -24,12 +23,12 @@ public abstract class BJRuleset {
     }};
 
     public static boolean maySplit(BJHand h) {
-        return mayHitAndStand(h) && h.getCards().size() == 2
-                && h.getCards().get(0).getRank() == h.getCards().get(1).getRank();
+        return mayHitAndStand(h) && h.getHandSize() == 2
+                && h.getRanks().get(0) == h.getRanks().get(1);
     }
 
     public static boolean mayDoubleDown(BJHand h) {
-        return getHandValue(h) <= 21 && h.getCards().size() == 2;
+        return getHandValue(h) <= 21 && h.getHandSize() == 2;
     }
 
     public static boolean mayHitAndStand(BJHand h) {
@@ -51,7 +50,7 @@ public abstract class BJRuleset {
             return -1;
         else if (getHandValue(h) == getHandValue(dealer))
             return 0;
-        else if (getHandValue(h) == 21 && dealer.getCards().size() == 2)
+        else if (getHandValue(h) == 21 && dealer.getHandSize() == 2)
             return 2;
         else if (getHandValue(h) > getHandValue(dealer))
             return 1;
@@ -65,9 +64,9 @@ public abstract class BJRuleset {
     public static int getHandValue(Hand hand) {
         int value = 0;
         boolean hasAce = false;
-        for (Card c : hand.getCards()) {
-            value += DOPPELKOPF_VALUE.get(c.getRank());
-            if (c.getRank() == 'A')
+        for (char c : hand.getRanks()) {
+            value += DOPPELKOPF_VALUE.get(c);
+            if (c == 'A')
                 hasAce = true;
         }
         if (hasAce)
@@ -76,6 +75,6 @@ public abstract class BJRuleset {
     }
 
     public static boolean hasBlackJack(BJHand h) {
-        return getHandValue(h) == 21 && h.getCards().size() == 2;
+        return getHandValue(h) == 21 && h.getHandSize() == 2;
     }
 }

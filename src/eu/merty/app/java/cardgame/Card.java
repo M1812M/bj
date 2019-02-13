@@ -9,7 +9,7 @@ import java.util.List;
  *
  * Gamecard with the france face.
  */
-public class Card {
+class Card {
     private char suit;
     private char rank;
 
