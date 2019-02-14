@@ -1,9 +1,9 @@
 package eu.merty.app.java.bj.model;
 
-import eu.merty.app.java.cardgame.Hand;
-
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class BJRuleset {
     private static final Dictionary<Character, Integer> DOPPELKOPF_VALUE = new Hashtable<Character, Integer>() {{
@@ -22,49 +22,50 @@ public abstract class BJRuleset {
         put('A', 1);
     }};
 
-    public static boolean maySplit(BJHand h) {
-        return mayHitAndStand(h) && h.getHandSize() == 2
-                && h.getRanks().get(0) == h.getRanks().get(1);
+    public static boolean maySplit(Hand hand) {
+        List<Card> cards = hand.getCardList();
+        return mayHitAndStand(hand) && cards.size() == 2
+                && cards.get(0).getRank() == cards.get(1).getRank();
     }
 
-    public static boolean mayDoubleDown(BJHand h) {
-        return getHandValue(h) <= 21 && h.getHandSize() == 2;
+    public static boolean mayDoubleDown(Hand hand) {
+        return getCardsValue(hand.getCardList()) <= 21 && hand.getCardList().size() == 2;
     }
 
-    public static boolean mayHitAndStand(BJHand h) {
-        return getHandValue(h) < 21;
+    public static boolean mayHitAndStand(Hand hand) {
+        return getCardsValue(hand.getCardList()) < 21;
     }
 
     /**
      * Compare the hand to dealers'.
      *
-     * @param h      players hand to compare
+     * @param hand      players hand to compare
      * @param dealer cards to compare to
      * @return <br> -1 if player lost
      * <br> 0 if it's a push
      * <br> 1 if player won
      * <br> 2 if player has a BJ
      */
-    public static int compareToDealer(BJHand h, Hand dealer) {
-        if (getHandValue(h) > 21)
+    public static int compareToDealer(Hand hand, List<Card> dealer) {
+        if (getCardsValue(hand.getCardList()) > 21)
             return -1;
-        else if (getHandValue(h) == getHandValue(dealer))
+        else if (getCardsValue(hand.getCardList()) == getCardsValue(dealer))
             return 0;
-        else if (getHandValue(h) == 21 && dealer.getHandSize() == 2)
+        else if (getCardsValue(hand.getCardList()) == 21 && dealer.size() == 2)
             return 2;
-        else if (getHandValue(h) > getHandValue(dealer))
+        else if (getCardsValue(hand.getCardList()) > getCardsValue(dealer))
             return 1;
-        else if (getHandValue(dealer) > 21)
+        else if (getCardsValue(dealer) > 21)
             return 1;
         else
             return -1;
     }
 
-    // TODO replce getHandValue with a function to be thrown on the hand for checking the value, but considering aces in a BJCardgame.
-    public static int getHandValue(Hand hand) {
+    // TODO replce getCardsValue with a function to be thrown on the cards for checking the value, but considering aces in a BlackJack.
+    public static int getCardsValue(List<Card> cards) {
         int value = 0;
         boolean hasAce = false;
-        for (char c : hand.getRanks()) {
+        for (char c : cards.stream().map(Card::getRank).collect(Collectors.toList())) {
             value += DOPPELKOPF_VALUE.get(c);
             if (c == 'A')
                 hasAce = true;
@@ -74,7 +75,7 @@ public abstract class BJRuleset {
         return value;
     }
 
-    public static boolean hasBlackJack(BJHand h) {
-        return getHandValue(h) == 21 && h.getHandSize() == 2;
+    public static boolean hasBlackJack(Hand hand) {
+        return getCardsValue(hand.getCardList()) == 21 && hand.getCardList().size() == 2;
     }
 }

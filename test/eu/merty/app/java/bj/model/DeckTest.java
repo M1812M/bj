@@ -1,4 +1,4 @@
-package eu.merty.app.java.cardgame;
+package eu.merty.app.java.bj.model;
 
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,4 @@
-package eu.merty.app.java.cardgame;
+package eu.merty.app.java.bj.model;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
  *
  * Gamecard with the france face.
  */
-class Card {
+public class Card {
     private char suit;
     private char rank;
 
@@ -38,7 +38,6 @@ class Card {
     }
 
     public String toString() {
-        char[] c = {getRank(), getSuit()};
-        return new String(c);
+        return String.valueOf(rank + suit);
     }
 }

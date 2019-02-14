@@ -1,7 +1,6 @@
 package eu.merty.app.java.bj.view;
 
 import eu.merty.app.java.bj.controller.BJController;
-import eu.merty.app.java.cardgame.Cardgame;
 
 import java.util.Scanner;
 
@@ -27,7 +26,7 @@ public class BJCommandLineUI {
     public boolean paint(String[][] tableData) {
         for (String[] stringArray : tableData) {
             switch (stringArray[0]) {
-                case "BJCardgame":
+                case "BlackJack":
                     message("BlackJack Cardgame");
                     break;
                 case "Dealer":
