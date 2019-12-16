@@ -148,15 +148,15 @@ public class BJController {
 
     private void playDealer() {
         do {
-            table.getDealersHand().addCard(table.getDeck().drawCard());
+            table.getDealer().getHand().addCard(table.getDeck().drawCard());
             ui.draw(table);
-        } while (BJRuleset.getHandValue(table.getDealersHand()) < 17);
-        ui.message("Dealer has " + table.getDealersHand() + " with value " + BJRuleset.getHandValue(table.getDealersHand()) + ".");
+        } while (BJRuleset.getHandValue(table.getDealer().getHand()) < 17);
+        ui.message("Dealer has " + table.getDealer().getHand() + " with value " + BJRuleset.getHandValue(table.getDealer().getHand()) + ".");
     }
 
     private void playHands() {
         for (Seat s : table.getSeatList()) {
-            for (BJHand h : s.getHandList()) {
+            for (BJHand h : s.getHandList()) { // FIXME Error if hand is split
                 boolean done = false;
                 while (!BJRuleset.hasBlackJack(h) && getHandOptions(h, s.getOwner()).size() > 0 && !done) {
                     String answer = ui.ask(
@@ -181,7 +181,8 @@ public class BJController {
                                 BJHand tmpH = new BJHand(s.getOwner());
                                 tmpH.setBetValue(s.getOwner().decreaseMoney(h.getBetValue()));
                                 tmpH.addCard(h.removeCard(0));
-                                s.addHand(tmpH); // to debug, if taking for next hand to play
+                                s.addHand(tmpH); // TODO to debug, if taking for next hand to play
+                                // FIXME add cards to each hand if splitted!
                                 break;
                             default:
                                 ui.message("Try again!");
@@ -196,7 +197,7 @@ public class BJController {
 
     private void placeCards() {
         placePlayerCards();
-        table.getDealersHand().addCard(table.getDeck().drawCard());
+        table.getDealer().getHand().addCard(table.getDeck().drawCard());
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
