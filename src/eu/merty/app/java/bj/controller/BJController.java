@@ -156,31 +156,31 @@ public class BJController {
 
     private void playHands() {
         for (Seat s : table.getSeatList()) {
-            for (BJHand h : s.getHandList()) { // FIXME Error if hand is split
+            for (int hCnt = 0; hCnt < s.getHandList().size(); hCnt++)  { // FIXME Error if hand is split
                 boolean done = false;
-                while (!BJRuleset.hasBlackJack(h) && getHandOptions(h, s.getOwner()).size() > 0 && !done) {
+                while (!BJRuleset.hasBlackJack(h) && getHandOptions(s.getHandList().get(hCnt), s.getOwner()).size() > 0 && !done) {
                     String answer = ui.ask(
                             "What do you, " +
                                     s.getOwner().getName() +
-                                    ", want to do for your hand (" + h + ")? " +
-                                    String.join(", ", getHandOptions(h, s.getOwner())));
-                    if (getHandOptions(h, s.getOwner()).contains(answer)) {
+                                    ", want to do for your hand (" + s.getHandList().get(hCnt) + ")? " +
+                                    String.join(", ", getHandOptions(s.getHandList().get(hCnt), s.getOwner())));
+                    if (getHandOptions(s.getHandList().get(hCnt), s.getOwner()).contains(answer)) {
                         switch (answer) {
                             case "hit":
-                                h.addCard(table.getDeck().drawCard());
+                                s.getHandList().get(hCnt).addCard(table.getDeck().drawCard());
                                 break;
                             case "stand":
                                 done = true;
                                 break;
                             case "double":
-                                h.addBetValue(s.getOwner().decreaseMoney(h.getBetValue()));
-                                h.addCard(table.getDeck().drawCard());
+                                s.getHandList().get(hCnt).addBetValue(s.getOwner().decreaseMoney(s.getHandList().get(hCnt).getBetValue()));
+                                s.getHandList().get(hCnt).addCard(table.getDeck().drawCard());
                                 done = true;
                                 break;
                             case "split":
                                 BJHand tmpH = new BJHand(s.getOwner());
-                                tmpH.setBetValue(s.getOwner().decreaseMoney(h.getBetValue()));
-                                tmpH.addCard(h.removeCard(0));
+                                tmpH.setBetValue(s.getOwner().decreaseMoney(s.getHandList().get(hCnt).getBetValue()));
+                                tmpH.addCard(s.getHandList().get(hCnt).removeCard(0));
                                 s.addHand(tmpH); // TODO to debug, if taking for next hand to play
                                 // FIXME add cards to each hand if splitted!
                                 break;
