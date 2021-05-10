@@ -158,7 +158,11 @@ public class BJController {
         for (Seat s : table.getSeatList()) {
             for (int hCnt = 0; hCnt < s.getHandList().size(); hCnt++)  { // FIXME Error if hand is split
                 boolean done = false;
-                while (!BJRuleset.hasBlackJack(h) && getHandOptions(s.getHandList().get(hCnt), s.getOwner()).size() > 0 && !done) {
+                while (
+                        !BJRuleset.hasBlackJack(s.getHandList().get(hCnt)) && 
+                        getHandOptions(s.getHandList().get(hCnt), s.getOwner()).size() > 0 &&
+                        !done
+                    ) {
                     String answer = ui.ask(
                             "What do you, " +
                                     s.getOwner().getName() +
