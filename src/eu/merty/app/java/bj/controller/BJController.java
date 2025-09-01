@@ -13,6 +13,7 @@ public class BJController {
     private final int NUMBER_OF_SEATS = 5;
     private final int NUMBER_OF_CARD_DECKS = 4;
     private final int PLAYER_START_MONEY = 20;
+    // TODO 1: Replace magic numbers (like 21, 17) throughout the code with named constants for clarity.
     private final String[] options = new String[]
             {"sit", "up", "run", "hit", "stand", "double", "split"};
     private BJTable table;
@@ -37,6 +38,7 @@ public class BJController {
             String userAction = ui.ask("These are your options: " + getRoundOptions());
             if (getRoundOptions().contains(userAction))
                 doCommand(userAction);
+            // FIXME 2: Add robust input validation for user actions and handle invalid input gracefully.
         } while (table.getOccupiedSeatsNumber() > 0);
     }
 
@@ -52,6 +54,7 @@ public class BJController {
         if (occupiedSeats > 0) {
             options.add("run");
         }
+        // TODO 3: Show which seats are occupied and by whom when asking the player to sit.
 
         return String.join(", ", options);
     }
@@ -70,6 +73,7 @@ public class BJController {
         if (p.getMoney() >= h.getBetValue() && BJRuleset.maySplit(h)) {
             options.add("split");
         }
+        // TODO 4: Add more user feedback for available hand options and reasons when options are not available.
 
         return options;
     }
@@ -78,7 +82,7 @@ public class BJController {
         switch (command) {
             case "sit":
                 String playerName = ui.ask("What is your name?");
-                while (true) try { // TODO show which seats are occupied with whom.
+                while (true) try {
                     sitPlayer(
                             playerName,
                             Integer.parseInt(ui.ask("On which of the " + NUMBER_OF_SEATS + " seat(s)?")) - 1);
@@ -103,15 +107,17 @@ public class BJController {
             default:
                 ui.err("Could not found the command.");
         }
+        // FIXME 5: Refactor doCommand to reduce code duplication and improve clarity.
     }
 
     private void playRound() {
-        placeBets();
-        placeCards();
-        playHands();
-        playDealer();
-        payout();
-        cleanTable();
+    placeBets();
+    placeCards();
+    playHands();
+    playDealer();
+    payout();
+    cleanTable();
+    // TODO 6: Ensure all hands and bets are reset properly after each round. Check for edge cases like running out of cards or money.
     }
 
     private void cleanTable() {
@@ -127,7 +133,7 @@ public class BJController {
             for (BJHand h : s.getHandList()) {
                 int playersHandValue = BJRuleset.getHandValue(h);
 
-                // TODO implement an instant BJ with 50% extra.
+                // TODO 7: Implement instant blackjack payout with 50% extra (blackjack pays 3:2).
                 if (playersHandValue > 21) {
                     ui.message(s.getOwner().getName() + ", your hand " + h + " with value " + BJRuleset.getHandValue(h) + " lost.");
                 } else if (dealersHandValue > 21) {
@@ -156,7 +162,8 @@ public class BJController {
 
     private void playHands() {
         for (Seat s : table.getSeatList()) {
-            for (int hCnt = 0; hCnt < s.getHandList().size(); hCnt++)  { // FIXME Error if hand is split
+            for (int hCnt = 0; hCnt < s.getHandList().size(); hCnt++)  {
+                // FIXME 8: Fix error if hand is split (ensure correct iteration and handling of new hands after split).
                 boolean done = false;
                 while (
                         !BJRuleset.hasBlackJack(s.getHandList().get(hCnt)) && 
@@ -185,8 +192,7 @@ public class BJController {
                                 BJHand tmpH = new BJHand(s.getOwner());
                                 tmpH.setBetValue(s.getOwner().decreaseMoney(s.getHandList().get(hCnt).getBetValue()));
                                 tmpH.addCard(s.getHandList().get(hCnt).removeCard(0));
-                                s.addHand(tmpH); // TODO to debug, if taking for next hand to play
-                                // FIXME add cards to each hand if splitted!
+                                s.addHand(tmpH); // TODO 9: After splitting, add a card to each new hand and allow the player to play both hands.
                                 break;
                             default:
                                 ui.message("Try again!");
@@ -240,6 +246,7 @@ public class BJController {
                         table.getSeatList()[seatNo].addHand(tmpHand);
                         break;
                     } catch (Exception ignored) {
+                        // FIXME 10: Add input validation for bet amounts (must be a positive integer, not more than player's money).
                     }
             }
     }

@@ -1,6 +1,5 @@
 package eu.merty.app.java.bj.model;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.ToIntFunction;
