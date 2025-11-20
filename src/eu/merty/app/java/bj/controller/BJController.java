@@ -14,8 +14,8 @@ public class BJController {
     private final int NUMBER_OF_CARD_DECKS = 4;
     private final int PLAYER_START_MONEY = 20;
     // TODO 1: Replace magic numbers (like 21, 17) throughout the code with named constants for clarity.
-    private final String[] options = new String[]
-            {"sit", "up", "run", "hit", "stand", "double", "split"};
+    /* TODO why did I want this const options array?
+            {"sit", "up", "run", "hit", "stand", "double", "split"}; */
     private BJTable table;
     private HashMap<String, Person> player;
     //  private CardGameUI ui;
