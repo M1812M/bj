@@ -69,7 +69,7 @@ public class BJCommandLineUI {
     public void err(String message) {
         System.err.println(message);
     }
-
+ 
     public void draw(Table t) {
     message(t.toString());
     // TODO 22: Improve table display for better readability and user experience.

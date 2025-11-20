@@ -13,8 +13,10 @@ public class BJController {
     private final int NUMBER_OF_SEATS = 5;
     private final int NUMBER_OF_CARD_DECKS = 4;
     private final int PLAYER_START_MONEY = 20;
-    // TODO 1: Replace magic numbers (like 21, 17) throughout the code with named constants for clarity.
+    private final int NUMBER_BLACKJACK = 21;
+    private final int NUMBER_DEALER_STAND = 17;
     /* TODO why did I want this const options array?
+    private final String[] options = new String[]
             {"sit", "up", "run", "hit", "stand", "double", "split"}; */
     private BJTable table;
     private HashMap<String, Person> player;
@@ -35,10 +37,13 @@ public class BJController {
 
     public void run() {
         do {
-            String userAction = ui.ask("These are your options: " + getRoundOptions());
-            if (getRoundOptions().contains(userAction))
-                doCommand(userAction);
-            // FIXME 2: Add robust input validation for user actions and handle invalid input gracefully.
+            try {
+                String userAction = ui.ask("These are your options: " + getRoundOptions());
+                if (getRoundOptions().contains(userAction))
+                    doCommand(userAction);
+            } catch (Exception e) {
+                ui.err("Sorry, that input is not valid.");
+            }
         } while (table.getOccupiedSeatsNumber() > 0);
     }
 
@@ -134,9 +139,9 @@ public class BJController {
                 int playersHandValue = BJRuleset.getHandValue(h);
 
                 // TODO 7: Implement instant blackjack payout with 50% extra (blackjack pays 3:2).
-                if (playersHandValue > 21) {
+                if (playersHandValue > NUMBER_BLACKJACK) {
                     ui.message(s.getOwner().getName() + ", your hand " + h + " with value " + BJRuleset.getHandValue(h) + " lost.");
-                } else if (dealersHandValue > 21) {
+                } else if (dealersHandValue > NUMBER_BLACKJACK) {
                     ui.message(s.getOwner().getName() + ", your hand " + h + " with value " + BJRuleset.getHandValue(h) + " won.");
                     s.getOwner().increaseMoney(h.getBetValue() * 2);
                 } else if (dealersHandValue == playersHandValue) {
@@ -156,7 +161,7 @@ public class BJController {
         do {
             table.getDealer().getHand().addCard(table.getDeck().drawCard());
             ui.draw(table);
-        } while (BJRuleset.getHandValue(table.getDealer().getHand()) < 17);
+        } while (BJRuleset.getHandValue(table.getDealer().getHand()) < NUMBER_DEALER_STAND);
         ui.message("Dealer has " + table.getDealer().getHand() + " with value " + BJRuleset.getHandValue(table.getDealer().getHand()) + ".");
     }
 
@@ -166,7 +171,7 @@ public class BJController {
                 // FIXME 8: Fix error if hand is split (ensure correct iteration and handling of new hands after split).
                 boolean done = false;
                 while (
-                        !BJRuleset.hasBlackJack(s.getHandList().get(hCnt)) && 
+                        !BJRuleset.hasBlackJack(s.getHandList().get(hCnt)) &&
                         getHandOptions(s.getHandList().get(hCnt), s.getOwner()).size() > 0 &&
                         !done
                     ) {
