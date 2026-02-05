@@ -13,13 +13,10 @@ public class Person {
         this.money += amount > 0 ? amount : 0;
     }
 
-    public int decreaseMoney(int amount) {
-        if (amount < 0 || money - amount < 0)
-            try {
-                throw new Exception("This player doesn't hold enough money or the amount is negative.");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    public int decreaseMoney(int amount) throws Exception {
+        if (amount <= 0 || money < amount)
+            // FIXME 1: Throw on invalid amounts (<=0 or exceeds funds) so callers can re-prompt without creating invalid bets.
+            throw new Exception("This player doesn't hold enough money or the amount is negative.");
         else
             this.money -= amount;
         return amount;

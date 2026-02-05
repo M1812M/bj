@@ -7,20 +7,15 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-// TODO import interfaces.Cardgame;
-
 public class BJController {
     private final int NUMBER_OF_SEATS = 5;
     private final int NUMBER_OF_CARD_DECKS = 4;
     private final int PLAYER_START_MONEY = 20;
     private final int NUMBER_BLACKJACK = 21;
     private final int NUMBER_DEALER_STAND = 17;
-    /* TODO why did I want this const options array?
-    private final String[] options = new String[]
-            {"sit", "up", "run", "hit", "stand", "double", "split"}; */
     private BJTable table;
     private HashMap<String, Person> player;
-    //  private CardGameUI ui;
+    // private CardGameUI ui;
     private BJCommandLineUI ui;
     // 0 sit - 1 up - 2 run - 3 hit - 4 stand - 5 doubleD - 6 split
 
@@ -59,7 +54,6 @@ public class BJController {
         if (occupiedSeats > 0) {
             options.add("run");
         }
-        // TODO 3: Show which seats are occupied and by whom when asking the player to sit.
 
         return String.join(", ", options);
     }
@@ -78,7 +72,6 @@ public class BJController {
         if (p.getMoney() >= h.getBetValue() && BJRuleset.maySplit(h)) {
             options.add("split");
         }
-        // TODO 4: Add more user feedback for available hand options and reasons when options are not available.
 
         return options;
     }
@@ -87,13 +80,17 @@ public class BJController {
         switch (command) {
             case "sit":
                 String playerName = ui.ask("What is your name?");
-                while (true) try {
-                    sitPlayer(
-                            playerName,
-                            Integer.parseInt(ui.ask("On which of the " + NUMBER_OF_SEATS + " seat(s)?")) - 1);
-                    break;
-                } catch (Exception ignored) {
-                    ui.err("Invalid seat number.");
+                while (true) {
+                    try {
+                        String seatPrompt = "On which of the " + NUMBER_OF_SEATS + " seat(s)? Current: "
+                                + getSeatStatus();
+                        sitPlayer(
+                                playerName,
+                                Integer.parseInt(ui.ask(seatPrompt)) - 1);
+                        break;
+                    } catch (Exception ignored) {
+                        ui.err("Invalid seat number.");
+                    }
                 }
                 break;
             case "up":
@@ -112,17 +109,15 @@ public class BJController {
             default:
                 ui.err("Could not found the command.");
         }
-        // FIXME 5: Refactor doCommand to reduce code duplication and improve clarity.
     }
 
     private void playRound() {
-    placeBets();
-    placeCards();
-    playHands();
-    playDealer();
-    payout();
-    cleanTable();
-    // TODO 6: Ensure all hands and bets are reset properly after each round. Check for edge cases like running out of cards or money.
+        placeBets();
+        placeCards();
+        playHands();
+        playDealer();
+        payout();
+        cleanTable();
     }
 
     private void cleanTable() {
@@ -138,20 +133,26 @@ public class BJController {
             for (BJHand h : s.getHandList()) {
                 int playersHandValue = BJRuleset.getHandValue(h);
 
-                // TODO 7: Implement instant blackjack payout with 50% extra (blackjack pays 3:2).
+                // TODO 4: Implement blackjack payout with 3:2 (incl. dealer blackjack vs.
+                // player blackjack rules).
                 if (playersHandValue > NUMBER_BLACKJACK) {
-                    ui.message(s.getOwner().getName() + ", your hand " + h + " with value " + BJRuleset.getHandValue(h) + " lost.");
+                    ui.message(s.getOwner().getName() + ", your hand " + h + " with value " + BJRuleset.getHandValue(h)
+                            + " lost.");
                 } else if (dealersHandValue > NUMBER_BLACKJACK) {
-                    ui.message(s.getOwner().getName() + ", your hand " + h + " with value " + BJRuleset.getHandValue(h) + " won.");
+                    ui.message(s.getOwner().getName() + ", your hand " + h + " with value " + BJRuleset.getHandValue(h)
+                            + " won.");
                     s.getOwner().increaseMoney(h.getBetValue() * 2);
                 } else if (dealersHandValue == playersHandValue) {
-                    ui.message(s.getOwner().getName() + ", your hand " + h + " with value " + BJRuleset.getHandValue(h) + " has a push.");
+                    ui.message(s.getOwner().getName() + ", your hand " + h + " with value " + BJRuleset.getHandValue(h)
+                            + " has a push.");
                     s.getOwner().increaseMoney(h.getBetValue());
                 } else if (dealersHandValue < playersHandValue) {
-                    ui.message(s.getOwner().getName() + ", your hand " + h + " with value " + BJRuleset.getHandValue(h) + " won.");
+                    ui.message(s.getOwner().getName() + ", your hand " + h + " with value " + BJRuleset.getHandValue(h)
+                            + " won.");
                     s.getOwner().increaseMoney(h.getBetValue() * 2);
-                } else { //if (dealerV > playerV) {
-                    ui.message(s.getOwner().getName() + ", your hand " + h + " with value " + BJRuleset.getHandValue(h) + " lost.");
+                } else { // if (dealerV > playerV) {
+                    ui.message(s.getOwner().getName() + ", your hand " + h + " with value " + BJRuleset.getHandValue(h)
+                            + " lost.");
                 }
             }
         }
@@ -162,19 +163,17 @@ public class BJController {
             table.getDealer().getHand().addCard(table.getDeck().drawCard());
             ui.draw(table);
         } while (BJRuleset.getHandValue(table.getDealer().getHand()) < NUMBER_DEALER_STAND);
-        ui.message("Dealer has " + table.getDealer().getHand() + " with value " + BJRuleset.getHandValue(table.getDealer().getHand()) + ".");
+        ui.message("Dealer has " + table.getDealer().getHand() + " with value "
+                + BJRuleset.getHandValue(table.getDealer().getHand()) + ".");
     }
 
     private void playHands() {
         for (Seat s : table.getSeatList()) {
-            for (int hCnt = 0; hCnt < s.getHandList().size(); hCnt++)  {
-                // FIXME 8: Fix error if hand is split (ensure correct iteration and handling of new hands after split).
+            for (int hCnt = 0; hCnt < s.getHandList().size(); hCnt++) {
                 boolean done = false;
-                while (
-                        !BJRuleset.hasBlackJack(s.getHandList().get(hCnt)) &&
+                while (!BJRuleset.hasBlackJack(s.getHandList().get(hCnt)) &&
                         getHandOptions(s.getHandList().get(hCnt), s.getOwner()).size() > 0 &&
-                        !done
-                    ) {
+                        !done) {
                     String answer = ui.ask(
                             "What do you, " +
                                     s.getOwner().getName() +
@@ -189,7 +188,8 @@ public class BJController {
                                 done = true;
                                 break;
                             case "double":
-                                s.getHandList().get(hCnt).addBetValue(s.getOwner().decreaseMoney(s.getHandList().get(hCnt).getBetValue()));
+                                s.getHandList().get(hCnt).addBetValue(
+                                        s.getOwner().decreaseMoney(s.getHandList().get(hCnt).getBetValue()));
                                 s.getHandList().get(hCnt).addCard(table.getDeck().drawCard());
                                 done = true;
                                 break;
@@ -197,7 +197,8 @@ public class BJController {
                                 BJHand tmpH = new BJHand(s.getOwner());
                                 tmpH.setBetValue(s.getOwner().decreaseMoney(s.getHandList().get(hCnt).getBetValue()));
                                 tmpH.addCard(s.getHandList().get(hCnt).removeCard(0));
-                                s.addHand(tmpH); // TODO 9: After splitting, add a card to each new hand and allow the player to play both hands.
+                                s.addHand(tmpH); // FIXME 2: After splitting, deal one card to each hand and ensure both
+                                                 // hands are played.
                                 break;
                             default:
                                 ui.message("Try again!");
@@ -251,7 +252,6 @@ public class BJController {
                         table.getSeatList()[seatNo].addHand(tmpHand);
                         break;
                     } catch (Exception ignored) {
-                        // FIXME 10: Add input validation for bet amounts (must be a positive integer, not more than player's money).
                     }
             }
     }
@@ -274,5 +274,25 @@ public class BJController {
         if (table.getSeatList()[seatNumber].isEmpty())
             throw new IllegalArgumentException("Seat is empty.");
         table.getSeatList()[seatNumber].freeOwner();
+    }
+
+    /**
+     * Return a compact description of all seats: "Seat 1: empty, Seat 2: Alice,
+     * ..."
+     */
+    private String getSeatStatus() {
+        StringBuilder sb = new StringBuilder();
+        Seat[] seats = table.getSeatList();
+        for (int i = 0; i < seats.length; i++) {
+            sb.append("Seat ").append(i + 1).append(": ");
+            if (seats[i].isEmpty()) {
+                sb.append("empty");
+            } else {
+                sb.append(seats[i].getOwner().getName());
+            }
+            if (i < seats.length - 1)
+                sb.append(", ");
+        }
+        return sb.toString();
     }
 }

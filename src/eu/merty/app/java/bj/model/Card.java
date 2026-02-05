@@ -2,8 +2,6 @@ package eu.merty.app.java.bj.model;
 
 import java.util.Arrays;
 import java.util.List;
-
-// TODO change access modifier to rather private
 /**
  * @author Hugo
  *

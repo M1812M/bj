@@ -5,7 +5,6 @@ import java.util.Hashtable;
 
 public abstract class BJRuleset {
     private static final Dictionary<Character, Integer> DOPPELKOPF_VALUE = new Hashtable<Character, Integer>() {{
-        // TODO 14: Consider renaming DOPPELKOPF_VALUE to something more blackjack-specific.
         put('2', 2);
         put('3', 3);
         put('4', 4);
@@ -24,7 +23,6 @@ public abstract class BJRuleset {
     public static boolean maySplit(BJHand h) {
     return mayHitAndStand(h) && h.getCards().size() == 2
         && h.getCards().get(0).getRank() == h.getCards().get(1).getRank();
-    // FIXME 15: Add logic to prevent split if player cannot afford a second bet.
     }
 
     public static boolean mayDoubleDown(BJHand h) {
@@ -60,7 +58,6 @@ public abstract class BJRuleset {
             return -1;
     }
 
-    // TODO replce getHandValue with a function to be thrown on the hand for checking the value, but considering aces in a BJTable.
     public static int getHandValue(Hand hand) {
         int value = 0;
         boolean hasAce = false;
@@ -71,9 +68,8 @@ public abstract class BJRuleset {
         }
         if (hasAce)
             value += value < 11 ? 11 : 0;
-        // FIXME 16: Refactor ace handling to properly support multiple aces and soft/hard hand values.
+        // FIXME 3: Correct ace handling for multiple aces and soft/hard hand values (use +10 when it doesn't bust).
         return value;
-    // TODO 17: Move getHandValue logic to BJHand or Hand class for better encapsulation.
     }
 
     public static boolean hasBlackJack(BJHand h) {

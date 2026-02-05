@@ -6,7 +6,6 @@ import eu.merty.app.java.bj.model.Table;
 import java.util.Scanner;
 
 public class BJCommandLineUI {
-    // TODO 20: Refactor to separate UI logic from game logic for better maintainability.
     private BJController game;
     private static Scanner scanner = new Scanner(System.in);
 /*
@@ -58,7 +57,6 @@ public class BJCommandLineUI {
         String answer = "";
         if (scanner.hasNextLine())
             answer = scanner.nextLine();
-        // FIXME 21: Add input validation and re-prompt user on invalid input.
         return answer;
     }
 
@@ -72,6 +70,6 @@ public class BJCommandLineUI {
  
     public void draw(Table t) {
     message(t.toString());
-    // TODO 22: Improve table display for better readability and user experience.
+    // TODO 5: Improve table display (dealer up-card, seats, bets) for readability.
     }
 }

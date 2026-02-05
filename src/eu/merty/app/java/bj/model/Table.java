@@ -2,8 +2,6 @@ package eu.merty.app.java.bj.model;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
-
-// TODO Tables should hold the player on seats with their hands for their seats.
 public abstract class Table {
     protected Deck deck;
     private Seat[] seatList;
