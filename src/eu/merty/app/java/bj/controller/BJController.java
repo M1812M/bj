@@ -8,11 +8,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class BJController {
-    private final int NUMBER_OF_SEATS = 5;
+    private int NUMBER_OF_SEATS = 5;
     private final int NUMBER_OF_CARD_DECKS = 4;
-    private final int PLAYER_START_MONEY = 20;
+    private int PLAYER_START_MONEY = 20;
     private final int NUMBER_BLACKJACK = 21;
     private final int NUMBER_DEALER_STAND = 17;
+    private int DEAL_DELAY_MS = 500;
     private BJTable table;
     private HashMap<String, Person> player;
     // private CardGameUI ui;
@@ -31,6 +32,7 @@ public class BJController {
     }
 
     public void run() {
+        startOrConfigure();
         do {
             try {
                 String userAction = ui.ask("These are your options: " + getRoundOptions());
@@ -40,6 +42,51 @@ public class BJController {
                 ui.err("Sorry, that input is not valid.");
             }
         } while (table.getOccupiedSeatsNumber() > 0);
+    }
+
+    private void startOrConfigure() {
+        try {
+            String answer = ui.ask("Start or configure? (start/configure)");
+            if (answer != null && answer.trim().equalsIgnoreCase("configure")) {
+                configureGame();
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void configureGame() {
+        try {
+            String seats = ui.ask("Number of seats? (Enter for default " + NUMBER_OF_SEATS + ")");
+            if (seats != null && !seats.trim().isEmpty()) {
+                int value = Integer.parseInt(seats.trim());
+                if (value > 0) {
+                    NUMBER_OF_SEATS = value;
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        try {
+            String money = ui.ask("Start money per player? (Enter for default " + PLAYER_START_MONEY + ")");
+            if (money != null && !money.trim().isEmpty()) {
+                int value = Integer.parseInt(money.trim());
+                if (value > 0) {
+                    PLAYER_START_MONEY = value;
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        try {
+            String delay = ui.ask("Deal delay in ms? (Enter for default " + DEAL_DELAY_MS + ")");
+            if (delay != null && !delay.trim().isEmpty()) {
+                int value = Integer.parseInt(delay.trim());
+                if (value >= 0) {
+                    DEAL_DELAY_MS = value;
+                }
+            }
+        } catch (Exception ignored) {
+        }
+
+        table = new BJTable(NUMBER_OF_SEATS, NUMBER_OF_CARD_DECKS);
     }
 
     private String getRoundOptions() {
@@ -179,32 +226,42 @@ public class BJController {
                                     s.getOwner().getName() +
                                     ", want to do for your hand (" + s.getHandList().get(hCnt) + ")? " +
                                     String.join(", ", getHandOptions(s.getHandList().get(hCnt), s.getOwner())));
-                    if (getHandOptions(s.getHandList().get(hCnt), s.getOwner()).contains(answer)) {
-                        switch (answer) {
-                            case "hit":
-                                s.getHandList().get(hCnt).addCard(table.getDeck().drawCard());
-                                break;
-                            case "stand":
-                                done = true;
-                                break;
-                            case "double":
-                                s.getHandList().get(hCnt).addBetValue(
-                                        s.getOwner().decreaseMoney(s.getHandList().get(hCnt).getBetValue()));
-                                s.getHandList().get(hCnt).addCard(table.getDeck().drawCard());
-                                done = true;
-                                break;
-                            case "split":
-                                BJHand tmpH = new BJHand(s.getOwner());
-                                tmpH.setBetValue(s.getOwner().decreaseMoney(s.getHandList().get(hCnt).getBetValue()));
-                                tmpH.addCard(s.getHandList().get(hCnt).removeCard(0));
-                                s.addHand(tmpH); // FIXME 2: After splitting, deal one card to each hand and ensure both
-                                                 // hands are played.
-                                break;
-                            default:
-                                ui.message("Try again!");
-                                break;
+                    try {
+                        if (getHandOptions(s.getHandList().get(hCnt), s.getOwner()).contains(answer)) {
+                            switch (answer) {
+                                case "hit":
+                                    s.getHandList().get(hCnt).addCard(table.getDeck().drawCard());
+                                    break;
+                                case "stand":
+                                    done = true;
+                                    break;
+                                case "double":
+                                    s.getHandList().get(hCnt).addBetValue(
+                                            s.getOwner().decreaseMoney(s.getHandList().get(hCnt).getBetValue()));
+                                    s.getHandList().get(hCnt).addCard(table.getDeck().drawCard());
+                                    done = true;
+                                    break;
+                                case "split":
+                                    BJHand tmpH = new BJHand(s.getOwner());
+                                    tmpH.setBetValue(
+                                            s.getOwner().decreaseMoney(s.getHandList().get(hCnt).getBetValue()));
+                                    tmpH.addCard(s.getHandList().get(hCnt).removeCard(0));
+                                    s.addHand(tmpH);
+                                    table.getDeck().drawCard();
+                                    tmpH.addCard(table.getDeck().drawCard());
+                                    break;
+                                default:
+                                    ui.message("Try again!");
+                                    break;
+                            }
+                            ui.draw(table);
                         }
-                        ui.draw(table);
+                    } catch (Exception e) {
+                        if (e instanceof InterruptedException) {
+                            Thread.currentThread().interrupt();
+                            return;
+                        }
+                        ui.err("Sorry, that input is not valid.");
                     }
                 }
             }
@@ -215,9 +272,10 @@ public class BJController {
         placePlayerCards();
         table.getDealer().getHand().addCard(table.getDeck().drawCard());
         try {
-            Thread.sleep(500);
+            Thread.sleep(DEAL_DELAY_MS);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
+            return;
         }
         ui.draw(table);
         placePlayerCards();
@@ -228,9 +286,10 @@ public class BJController {
             for (BJHand h : s.getHandList()) {
                 h.addCard(table.getDeck().drawCard());
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(DEAL_DELAY_MS);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Thread.currentThread().interrupt();
+                    return;
                 }
                 ui.draw(table);
             }
