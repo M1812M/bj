@@ -2,14 +2,18 @@ package eu.merty.app.java.bj.model;
 
 import java.util.Arrays;
 import java.util.List;
+
 /**
- * @author Hugo
- *
- * Gamecard with the france face.
+ * Game card with a french suit and rank notation.
  */
 public class Card {
-    private char suit;
-    private char rank;
+    private static final List<Character> VALID_RANKS = Arrays.asList(
+            'X', 'A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'
+    );
+    private static final List<Character> VALID_SUITS = Arrays.asList('x', 's', 'h', 'd', 'c');
+
+    private final char suit;
+    private final char rank;
 
     /**
      * Constructor
@@ -18,13 +22,11 @@ public class Card {
      * @param r rank of the card (X, A, K, Q, J, T, 9, 8, 7, 6, 5, 4, 3, 2)
      */
     Card(char s, char r) throws IllegalArgumentException {
-        List<Character> cardRank = Arrays.asList('X', 'A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2');
-        List<Character> cardSuit = Arrays.asList('x', 's', 'h', 'd', 'c');
-        if (!cardSuit.contains(s) || !cardRank.contains(r)) {
-            throw new IllegalArgumentException();
+        if (!VALID_SUITS.contains(s) || !VALID_RANKS.contains(r)) {
+            throw new IllegalArgumentException("Invalid card: " + r + s);
         }
-        suit = s;
-        rank = r;
+        this.suit = s;
+        this.rank = r;
     }
 
     char getSuit() {
@@ -35,8 +37,8 @@ public class Card {
         return rank;
     }
 
+    @Override
     public String toString() {
-        char[] c = {getRank(), getSuit()};
-        return new String(c);
+        return new String(new char[]{rank, suit});
     }
 }

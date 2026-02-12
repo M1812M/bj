@@ -3,7 +3,7 @@ package eu.merty.app.java.bj.model;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CardTest {
     private static Card testCard;
@@ -15,31 +15,17 @@ class CardTest {
 
     @Test
     void wrongInput() {
-        try {
-            new Card('x', 'g');
-            fail("Exception is expected for wrong rank.");
-        } catch (IllegalArgumentException e) {
-        }
-
-        try {
-            new Card('f', 'K');
-            fail("Exception is expected for wrong suit.");
-        } catch (IllegalArgumentException e) {
-        }
-
-        try {
-            new Card('s', 'R');
-            fail("Exception is expected for wrong arguments.");
-        } catch (IllegalArgumentException e) {
-        }
+        assertThrows(IllegalArgumentException.class, () -> new Card('x', 'g'));
+        assertThrows(IllegalArgumentException.class, () -> new Card('f', 'K'));
+        assertThrows(IllegalArgumentException.class, () -> new Card('s', 'R'));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void getSuit() {
         assertEquals('h', testCard.getSuit());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void getRank() {
         assertEquals('A', testCard.getRank());
     }

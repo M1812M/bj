@@ -9,7 +9,7 @@ public class BJTable extends Table {
     }
 
     public void newDeck(int numberOfCardDecks) {
-    this.deck = new Deck(Deck.CardDeckVariation.STANDARD_52, numberOfCardDecks);
+        this.deck = new Deck(Deck.CardDeckVariation.STANDARD_52, numberOfCardDecks);
     }
 
     public Dealer getDealer() {
@@ -18,6 +18,10 @@ public class BJTable extends Table {
 
     @Override
     public String toString() {
-        return "Dealer (" + dealer.getHand() + "), " + super.toString();
+        String seats = super.toString();
+        if (seats.isEmpty()) {
+            return "Dealer (" + dealer.getHand() + ")";
+        }
+        return "Dealer (" + dealer.getHand() + "), " + seats;
     }
 }

@@ -5,8 +5,9 @@ public class BJHand extends Hand {
 
     public BJHand(Person owner) {
         super();
-        if (owner == null)
+        if (owner == null) {
             throw new NullPointerException("Owner is not instantiated.");
+        }
         this.betValue = 0;
     }
 
@@ -15,19 +16,25 @@ public class BJHand extends Hand {
     }
 
     public void setBetValue(int betAmount) {
-        if (this.betValue != 0)
-            throw new UnsupportedOperationException("The bet is already set to.");
+        if (betAmount <= 0) {
+            throw new IllegalArgumentException("betAmount must be positive.");
+        }
+        if (this.betValue != 0) {
+            throw new UnsupportedOperationException("The bet is already set.");
+        }
+
         this.betValue = betAmount;
     }
 
     public void addBetValue(int deltaAmount) {
-        if (deltaAmount < 0)
+        if (deltaAmount < 0) {
             throw new IllegalArgumentException("deltaAmount is negative.");
+        }
         this.betValue += deltaAmount;
     }
 
     @Override
     public String toString() {
-        return super.toString() + "(" + this.betValue + ")";
+        return super.toString() + " (" + this.betValue + ")";
     }
 }

@@ -7,8 +7,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class DeckTest {
 
     @Test
-    void checkConstructor(){
-        Deck d = new Deck(Deck.CardDeckVariation.STANDARD_32,1);
+    void checkConstructor() {
+        Deck d = new Deck(Deck.CardDeckVariation.STANDARD_32, 1);
         assertEquals(32, d.getDeckSize());
+    }
+
+    @Test
+    void drawCardReducesDeckSize() {
+        Deck d = new Deck(Deck.CardDeckVariation.STANDARD_52, 1);
+        d.drawCard();
+        assertEquals(51, d.getDeckSize());
     }
 }

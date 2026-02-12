@@ -1,24 +1,33 @@
 package eu.merty.app.java.bj.model;
 
 public class Person {
-    int money;
-    private String name;
+    private int money;
+    private final String name;
 
     public Person(String name) {
-        this.name = name;
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("name must not be empty.");
+        }
+        this.name = name.trim();
         this.money = 0;
     }
 
     public void increaseMoney(int amount) {
-        this.money += amount > 0 ? amount : 0;
+        if (amount < 0) {
+            throw new IllegalArgumentException("amount is negative.");
+        }
+        this.money += amount;
     }
 
-    public int decreaseMoney(int amount) throws Exception {
-        if (amount <= 0 || money < amount)
-            // FIXME 1: Throw on invalid amounts (<=0 or exceeds funds) so callers can re-prompt without creating invalid bets.
-            throw new Exception("This player doesn't hold enough money or the amount is negative.");
-        else
-            this.money -= amount;
+    public int decreaseMoney(int amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("amount must be positive.");
+        }
+        if (money < amount) {
+            throw new IllegalStateException("This player doesn't hold enough money.");
+        }
+
+        this.money -= amount;
         return amount;
     }
 

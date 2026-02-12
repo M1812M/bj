@@ -3,12 +3,10 @@ package eu.merty.app.java.bj.model;
 import java.util.*;
 
 /**
- * @author Hugo
- * <p>
  * Deck of cards with france faces. Variations are 52 or 32 cards.
  */
 public class Deck {
-    private static final List<String> FULL_DECK = Arrays.asList(
+    private static final List<String> FULL_DECK = Collections.unmodifiableList(Arrays.asList(
             "Ac", "Ad", "Ah", "As",
             "Kc", "Kd", "Kh", "Ks",
             "Qc", "Qd", "Qh", "Qs",
@@ -23,20 +21,25 @@ public class Deck {
             "3c", "3d", "3h", "3s",
             "2c", "2d", "2h", "2s",
             "Xx", "Xx", "Xx"
-    );
+    ));
 
-    private ArrayList<Card> deck;
+    private final List<Card> deck;
+    private final Random random;
 
     private void shuffle() {
-        Collections.shuffle(this.deck, new Random(System.currentTimeMillis()));
+        Collections.shuffle(this.deck, random);
     }
 
     public enum CardDeckVariation {
         STANDARD_52(52), STANDARD_32(32);
-        private int value;
+        private final int size;
 
         CardDeckVariation(int size) {
-            this.value = size;
+            this.size = size;
+        }
+
+        int getSize() {
+            return size;
         }
     }
 
@@ -47,10 +50,21 @@ public class Deck {
      * @param numberOfDecks Multiple card faces, but only form the same kind, and will be mixed together.
      */
     Deck(CardDeckVariation variation, int numberOfDecks) {
+        if (variation == null) {
+            throw new IllegalArgumentException("variation must not be null.");
+        }
+        if (numberOfDecks < 1) {
+            throw new IllegalArgumentException("numberOfDecks must be at least 1.");
+        }
+
         deck = new ArrayList<>();
+        random = new Random();
+
         // add all cards within variation to the deck
-        for (int i = numberOfDecks; i > 0; i--)
-            FULL_DECK.subList(0, variation.value).forEach((s) -> deck.add(new Card(s.charAt(1), s.charAt(0))));
+        for (int i = 0; i < numberOfDecks; i++) {
+            FULL_DECK.subList(0, variation.getSize())
+                    .forEach((s) -> deck.add(new Card(s.charAt(1), s.charAt(0))));
+        }
         this.shuffle();
     }
 
@@ -67,6 +81,9 @@ public class Deck {
      * @return Card which is drawn from the top of deck.
      */
     public Card drawCard() {
+        if (deck.isEmpty()) {
+            throw new IllegalStateException("Deck is empty.");
+        }
         return deck.remove(0);
     }
 }

@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 public class Seat {
     private Person owner;
-    private List<BJHand> handList;
+    private final List<BJHand> handList;
 
     public Seat() {
         handList = new LinkedList<>();
@@ -25,7 +25,7 @@ public class Seat {
     }
 
     public void clearHands() {
-        handList = new LinkedList<>();
+        handList.clear();
     }
 
     public Person getOwner() {
@@ -47,8 +47,18 @@ public class Seat {
 
     @Override
     public String toString() {
-        if (owner == null)
+        if (owner == null) {
             return "";
-        return owner.getName() + " (" + handList.stream().map(Object::toString).collect(Collectors.joining(", ", "", "")) + ")";
+        }
+
+        if (handList.isEmpty()) {
+            return owner.getName();
+        }
+
+        return owner.getName() + " (" +
+                handList.stream()
+                        .map(Object::toString)
+                        .collect(Collectors.joining(", "))
+                + ")";
     }
 }

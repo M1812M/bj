@@ -1,63 +1,19 @@
 package eu.merty.app.java.bj.view;
 
-import eu.merty.app.java.bj.controller.BJController;
+import eu.merty.app.java.bj.model.BJHand;
+import eu.merty.app.java.bj.model.BJRuleset;
+import eu.merty.app.java.bj.model.BJTable;
+import eu.merty.app.java.bj.model.Seat;
 import eu.merty.app.java.bj.model.Table;
 
 import java.util.Scanner;
 
 public class BJCommandLineUI {
-    private BJController game;
-    private static Scanner scanner = new Scanner(System.in);
-/*
-    private String options;
-
-    public BJCommandLineUI(BJController game) {
-        this.game = game;
-        this.options = "sit";
-    }
-
-    public void run() {
-        String userAction = ask("These are your options: " + options);
-        game.doCommand(new String[]{userAction});
-    }
-
-    public void action(List<String> optionsList) {
-    }
-
-    public boolean paint(String[][] tableData) {
-        for (String[] stringArray : tableData) {
-            switch (stringArray[0]) {
-                case "BJTable":
-                    message("BlackJack Table");
-                    break;
-                case "Dealer":
-                    message("Dealer: " + stringArray[1]);
-                    break;
-                case "Seat":
-                    String hands = "";
-                    for (int i = 3; i + 1 < stringArray.length; i++) {
-                        hands += ", <" + stringArray[i] + ">(" + stringArray[i + 1] + ")";
-                    }
-                    message(stringArray[1] + "(" + stringArray[2] + " M):" + (hands.length() > 0 ? hands.substring(1) : ""));
-                    break;
-                case "Options":
-                    options = "";
-                    for (int i = 0; i + 1 < stringArray.length; i++) {
-                        options += ", " + stringArray[i];
-                    }
-                    options = options.length() > 1 ? options.substring(2) : "";
-            }
-        }
-        return true;
-    }
-*/
+    private static final Scanner SCANNER = new Scanner(System.in);
 
     public String ask(String question) {
         message(question);
-        String answer = "";
-        if (scanner.hasNextLine())
-            answer = scanner.nextLine();
-        return answer;
+        return SCANNER.hasNextLine() ? SCANNER.nextLine() : "";
     }
 
     public void message(String message) {
@@ -67,9 +23,47 @@ public class BJCommandLineUI {
     public void err(String message) {
         System.err.println(message);
     }
- 
-    public void draw(Table t) {
-    message(t.toString());
-    // TODO 5: Improve table display (dealer up-card, seats, bets) for readability.
+
+    public void draw(Table table) {
+        if (table instanceof BJTable) {
+            drawBJTable((BJTable) table);
+            return;
+        }
+        message(table.toString());
+    }
+
+    private void drawBJTable(BJTable table) {
+        message("=== Blackjack Table ===");
+        message("Dealer: " + table.getDealer().getHand() + " (value "
+                + BJRuleset.getHandValue(table.getDealer().getHand()) + ")");
+
+        Seat[] seats = table.getSeatList();
+        for (int i = 0; i < seats.length; i++) {
+            message("Seat " + (i + 1) + ": " + describeSeat(seats[i]));
+        }
+    }
+
+    private String describeSeat(Seat seat) {
+        if (seat.isEmpty()) {
+            return "empty";
+        }
+        if (seat.getHandList().isEmpty()) {
+            return seat.getOwner().getName() + " (money " + seat.getOwner().getMoney() + ", no hand)";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(seat.getOwner().getName())
+                .append(" (money ")
+                .append(seat.getOwner().getMoney())
+                .append("): ");
+
+        for (int i = 0; i < seat.getHandList().size(); i++) {
+            BJHand hand = seat.getHandList().get(i);
+            if (i > 0) {
+                sb.append(" | ");
+            }
+            sb.append(hand).append(" value ").append(BJRuleset.getHandValue(hand));
+        }
+        return sb.toString();
     }
 }

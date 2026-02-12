@@ -1,43 +1,33 @@
-# BJ
+# BJ (Blackjack)
 
-Short description
-A small, focused Blackjack (BJ) implementation and utility library intended for learning, experimentation, and automated play. Includes core game logic, simple command-line interface, and tests.
+Simple command-line Blackjack implementation in Java.
 
-Features
-- Core Blackjack rules: dealing, hitting, standing, splits and basic hand scoring.
-- Pluggable player strategy for automated or interactive play.
-- Lightweight test suite and example simulations.
+## Features
+- Multi-seat table with configurable seat count.
+- Betting, hit, stand, double, and split actions.
+- Dealer draw logic and payout handling.
+- Unit tests for core model/rules behavior.
 
-Quickstart
-1. Clone the repository:
-    git clone <repo-url>
-2. Inspect the project entry point (commonly src/ or app/). Run from the repository root:
-    - If Python: python -m bj or python src/main.py
-    - If Node.js: npm install && node src/index.js
-    Adjust the command to match the actual language/runtime used in this repo.
+## Project Structure
+- `src/eu/merty/app/java/bj/model`: game model and blackjack rules.
+- `src/eu/merty/app/java/bj/controller`: game loop and round flow.
+- `src/eu/merty/app/java/bj/view`: command-line UI rendering/input.
+- `test/eu/merty/app/java/bj`: unit tests.
 
-Running tests
-- If Python project with pytest: pip install -r requirements.txt && pytest
-- If Node project: npm test
+## Run (without build tool)
+Compile:
 
-Project structure (typical)
-- src/        — source code (game logic, CLI, strategies)
-- tests/      — unit and integration tests
-- docs/       — design notes and rule clarifications
-- examples/   — example scripts and sample runs
+```powershell
+New-Item -ItemType Directory -Force out | Out-Null
+javac -d out (Get-ChildItem -Recurse -Path src -Filter *.java | ForEach-Object { $_.FullName })
+```
 
-Development
-- Follow existing code style (linting tools may be included).
-- Add unit tests for new features and edge cases.
-- Keep changes small and focused; open an issue before large design changes.
+Start:
 
-Contributing
-- Open issues for bugs and feature requests.
-- Submit pull requests with descriptive titles and test coverage.
-- Maintain backwards compatibility where possible.
+```powershell
+java -cp out eu.merty.app.java.bj.controller.BJController
+```
 
-License
-Specify a license in LICENSE (e.g., MIT) or adjust to your preferred terms.
-
-Contact
-Open an issue or create a pull request for questions, bug reports, or contributions.
+## Tests
+Tests are written with JUnit 5 under `test/`.
+If you use a build tool (Maven/Gradle), point it at `src/` and `test/` and run the test task.
