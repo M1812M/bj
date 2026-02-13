@@ -10,6 +10,9 @@ import java.util.Scanner;
 
 public class BJCommandLineUI {
     private static final Scanner SCANNER = new Scanner(System.in);
+    private static final int DEFAULT_DRAW_DELAY_MS = 500;
+
+    private int drawDelayMs = DEFAULT_DRAW_DELAY_MS;
 
     public String ask(String question) {
         message(question);
@@ -24,7 +27,16 @@ public class BJCommandLineUI {
         System.err.println(message);
     }
 
+    public void setDrawDelayMs(int drawDelayMs) {
+        if (drawDelayMs < 0) {
+            throw new IllegalArgumentException("drawDelayMs must be >= 0.");
+        }
+        this.drawDelayMs = drawDelayMs;
+    }
+
     public void draw(Table table) {
+        pauseBeforeDraw();
+
         if (table instanceof BJTable) {
             drawBJTable((BJTable) table);
             return;
@@ -65,5 +77,17 @@ public class BJCommandLineUI {
             sb.append(hand).append(" value ").append(BJRuleset.getHandValue(hand));
         }
         return sb.toString();
+    }
+
+    private void pauseBeforeDraw() {
+        if (drawDelayMs == 0) {
+            return;
+        }
+
+        try {
+            Thread.sleep(drawDelayMs);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

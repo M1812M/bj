@@ -29,6 +29,10 @@ public class BJController {
     private final Map<String, Person> players = new HashMap<>();
     private final BJCommandLineUI ui = new BJCommandLineUI();
 
+    public BJController() {
+        ui.setDrawDelayMs(dealDelayMs);
+    }
+
     public static void main(String[] args) {
         BJController bjController = new BJController();
         bjController.run();
@@ -78,6 +82,7 @@ public class BJController {
                 0
         );
 
+        ui.setDrawDelayMs(dealDelayMs);
         table = new BJTable(numberOfSeats, NUMBER_OF_CARD_DECKS);
     }
 
@@ -286,10 +291,10 @@ public class BJController {
             return;
         }
         table.getDealer().getHand().addCard(table.getDeck().drawCard());
-        if (!sleepDealDelay()) {
+        ui.draw(table);
+        if (Thread.currentThread().isInterrupted()) {
             return;
         }
-        ui.draw(table);
         placePlayerCards();
     }
 
@@ -297,23 +302,13 @@ public class BJController {
         for (Seat seat : table.getSeatList()) {
             for (BJHand hand : seat.getHandList()) {
                 hand.addCard(table.getDeck().drawCard());
-                if (!sleepDealDelay()) {
+                ui.draw(table);
+                if (Thread.currentThread().isInterrupted()) {
                     return false;
                 }
-                ui.draw(table);
             }
         }
         return true;
-    }
-
-    private boolean sleepDealDelay() {
-        try {
-            Thread.sleep(dealDelayMs);
-            return true;
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            return false;
-        }
     }
 
     private void placeBets() {
