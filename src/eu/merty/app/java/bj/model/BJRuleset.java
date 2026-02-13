@@ -31,18 +31,18 @@ public abstract class BJRuleset {
                 && h.getCards().get(0).getRank() == h.getCards().get(1).getRank();
     }
 
-    public static boolean mayDoubleDown(BJHand h) {
-        return getHandValue(h) <= 21 && h.getCards().size() == 2;
+    public static boolean mayDoubleDown(Hand hand) {
+        return getCardsValue(hand.getCardList()) <= 21 && hand.getCardList().size() == 2;
     }
 
-    public static boolean mayHitAndStand(BJHand h) {
-        return getHandValue(h) < 21;
+    public static boolean mayHitAndStand(Hand hand) {
+        return getCardsValue(hand.getCardList()) < 21;
     }
 
     /**
      * Compare the hand to dealers'.
      *
-     * @param h      players hand to compare
+     * @param hand      players hand to compare
      * @param dealer cards to compare to
      * @return <br> -1 if player lost
      * <br> 0 if it's a push
@@ -106,7 +106,7 @@ public abstract class BJRuleset {
         return value;
     }
 
-    public static boolean hasBlackJack(BJHand h) {
-        return getHandValue(h) == 21 && h.getCards().size() == 2;
+    public static boolean hasBlackJack(Hand hand) {
+        return getCardsValue(hand.getCardList()) == 21 && hand.getCardList().size() == 2;
     }
 }

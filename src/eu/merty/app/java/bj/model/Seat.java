@@ -1,9 +1,5 @@
 package eu.merty.app.java.bj.model;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class Seat {
     private Person owner;
     private final List<BJHand> handList;
@@ -37,14 +33,38 @@ public class Seat {
     }
 
     public boolean isEmpty() {
-        return owner == null;
+        return this.playerName == null;
     }
 
-    public Seat sitOwner(Person person) {
-        this.owner = person;
-        return this;
+    public void leaveSeat() {
+        this.playerName = null;
     }
 
+    public void sitDown(Player player) {
+        this.playerName = player.getName();
+    }
+
+    public String getPlayersName() {
+        return this.playerName;
+    }
+
+    /*
+        public List<Hand> getHandList() {
+            return handList;
+        }
+
+        public void addHand(Hand h) {
+            handList.add(h);
+        }
+
+        public boolean removeHand(Hand h) {
+            return handList.remove(h);
+        }
+
+        public void clearHands() {
+            handList = new LinkedList<>();
+        }
+    */
     @Override
     public String toString() {
         if (owner == null) {

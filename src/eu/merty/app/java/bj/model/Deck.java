@@ -46,7 +46,7 @@ public class Deck {
     /**
      * Creates a deck of cards with shuffled order.
      *
-     * @param variation     CardDeckVariation is needed for the number and kind of cards to pick from.
+     * @param deckVariation CardDeckVariation is needed for the number and kind of cards to pick from.
      * @param numberOfDecks Multiple card faces, but only form the same kind, and will be mixed together.
      */
     Deck(CardDeckVariation variation, int numberOfDecks) {
@@ -68,6 +68,10 @@ public class Deck {
         this.shuffle();
     }
 
+    private void shuffle() {
+        Collections.shuffle(this.deck, new Random(System.currentTimeMillis()));
+    }
+
     /**
      * @return Deck size.
      */
@@ -85,5 +89,22 @@ public class Deck {
             throw new IllegalStateException("Deck is empty.");
         }
         return deck.remove(0);
+    }
+
+    public Deck.CardDeckVariation getDeckVariation() {
+        return this.deckVariation;
+    }
+
+    public int getNumberOfDecks() {
+        return this.numberOfDecks;
+    }
+
+    public enum CardDeckVariation {
+        STANDARD_52(52), STANDARD_32(32);
+        private int value;
+
+        CardDeckVariation(int size) {
+            this.value = size;
+        }
     }
 }

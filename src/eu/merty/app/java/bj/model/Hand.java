@@ -3,7 +3,6 @@ package eu.merty.app.java.bj.model;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.ToIntFunction;
 
 public class Hand {
     private final List<Card> heldCards;
@@ -26,8 +25,8 @@ public class Hand {
         heldCards.add(card);
     }
 
-    public Card removeCard(int index) {
-        return heldCards.remove(index);
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     List<Card> getCards() {
