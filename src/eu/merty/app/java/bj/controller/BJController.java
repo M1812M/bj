@@ -11,21 +11,23 @@ import java.util.List;
 // TODO import interfaces.Cardgame;
 
 public class BJController {
-    private final int NUMBER_OF_SEATS = 5;
-    private final int NUMBER_OF_CARD_DECKS = 4;
-    private final int PLAYER_START_MONEY = 20;
-    private final String[] options = new String[]
-            {"sit", "up", "run", "hit", "stand", "double", "split"};
-    private BJTable table;
-    private HashMap<String, Person> player;
-    //  private CardGameUI ui;
-    private BJCommandLineUI ui;
-    // 0 sit - 1 up - 2 run - 3 hit - 4 stand - 5 doubleD - 6 split
+    private static final int DEFAULT_NUMBER_OF_SEATS = 5;
+    private static final int NUMBER_OF_CARD_DECKS = 4;
+    private static final int DEFAULT_PLAYER_START_MONEY = 20;
+    private static final int NUMBER_BLACKJACK = 21;
+    private static final int NUMBER_DEALER_STAND = 17;
+    private static final int DEFAULT_DEAL_DELAY_MS = 500;
+
+    private int numberOfSeats = DEFAULT_NUMBER_OF_SEATS;
+    private int playerStartMoney = DEFAULT_PLAYER_START_MONEY;
+    private int dealDelayMs = DEFAULT_DEAL_DELAY_MS;
+
+    private BJTable table = new BJTable(numberOfSeats, NUMBER_OF_CARD_DECKS);
+    private final Map<String, Person> players = new HashMap<>();
+    private final BJCommandLineUI ui = new BJCommandLineUI();
 
     public BJController() {
-        table = new BJTable(NUMBER_OF_SEATS, NUMBER_OF_CARD_DECKS);
-        player = new HashMap<>();
-        ui = new BJCommandLineUI();
+        ui.setDrawDelayMs(dealDelayMs);
     }
 
     public static void main(String[] args) {
@@ -42,8 +44,53 @@ public class BJController {
         } while (table.getOccupiedSeatsNumber() > 0);
     }
 
-    private String getRoundOptions() {
-        List<String> options = new LinkedList<String>();
+    private void startOrConfigure() {
+        try {
+            String answer = normalizeInput(ui.ask("Start or configure? (start/configure)"));
+            if ("configure".equals(answer)) {
+                configureGame();
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void configureGame() {
+        numberOfSeats = readOptionalInt(
+                "Number of seats? (Enter for default " + numberOfSeats + ")",
+                numberOfSeats,
+                1
+        );
+        playerStartMoney = readOptionalInt(
+                "Start money per player? (Enter for default " + playerStartMoney + ")",
+                playerStartMoney,
+                1
+        );
+        dealDelayMs = readOptionalInt(
+                "Deal delay in ms? (Enter for default " + dealDelayMs + ")",
+                dealDelayMs,
+                0
+        );
+
+        ui.setDrawDelayMs(dealDelayMs);
+        table = new BJTable(numberOfSeats, NUMBER_OF_CARD_DECKS);
+    }
+
+    private int readOptionalInt(String prompt, int fallback, int minValue) {
+        try {
+            String answer = ui.ask(prompt);
+            if (answer == null || answer.trim().isEmpty()) {
+                return fallback;
+            }
+
+            int value = Integer.parseInt(answer.trim());
+            return value >= minValue ? value : fallback;
+        } catch (Exception ignored) {
+            return fallback;
+        }
+    }
+
+    private List<String> getRoundOptions() {
+        List<String> options = new ArrayList<>();
         int occupiedSeats = table.getOccupiedSeatsNumber();
         if (occupiedSeats < NUMBER_OF_SEATS) {
             options.add("sit");
@@ -199,29 +246,28 @@ public class BJController {
     }
 
     private void placeCards() {
-        placePlayerCards();
-        table.getDealersHand().addCard(table.getDeck().drawCard());
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (!placePlayerCards()) {
+            return;
         }
+        table.getDealer().getHand().addCard(table.getDeck().drawCard());
         ui.draw(table);
+        if (Thread.currentThread().isInterrupted()) {
+            return;
+        }
         placePlayerCards();
     }
 
-    private void placePlayerCards() {
-        for (Seat s : table.getSeatList()) {
-            for (BJHand h : s.getHandList()) {
-                h.addCard(table.getDeck().drawCard());
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+    private boolean placePlayerCards() {
+        for (Seat seat : table.getSeatList()) {
+            for (BJHand hand : seat.getHandList()) {
+                hand.addCard(table.getDeck().drawCard());
                 ui.draw(table);
+                if (Thread.currentThread().isInterrupted()) {
+                    return false;
+                }
             }
         }
+        return true;
     }
 
     private void placeBets() {
